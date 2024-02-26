@@ -38,3 +38,23 @@ out/
 
 docker-compose.yml
 **/application.yml
+
+!gradle/
+!build/
+!build.gradle
+!gradlew
+!gradlew.bat
+!settings.gradle
+
+# Source code
+!src/
+
+!gradle/
+!build/
+!build.gradle
+!gradlew
+!gradlew.bat
+!settings.gradle
+
+# Source code
+!src/
