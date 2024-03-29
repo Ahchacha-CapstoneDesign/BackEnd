@@ -154,31 +154,33 @@ public class UserService {
         String jjsUrl2 = "https://info.hansung.ac.kr/jsp_21/student/hakjuk/haksang_info2_h_rwd.jsp";
         Connection.Response response2 = ConnectionResponse.getResponse(session, jjsUrl2);
 
+        String gradesUrl = "https://info.hansung.ac.kr/jsp_21/student/grade/total_grade.jsp";
+        Connection.Response gradesResponse = ConnectionResponse.getResponse(session, gradesUrl);
+
+        Document doc = response.parse();
         Document doc2 = response2.parse();
+        Document gradeDoc = gradesResponse.parse();
+
+        Element link = doc.select("a.d-block").first();
+        String text = link.html(); // "모바일소프트웨어트랙<br> 웹공학트랙<br> 김동욱"
+        String[] split = text.split("<br>");
+        String track1 = split[0].trim(); // "모바일소프트웨어트랙"
+        String track2 = split[1].trim(); // "웹공학트랙"
+        String name = split[2].trim(); // 김동욱
+
         String phoneNumberSelector = "#menu183_obj498 > ul > li:nth-child(2) > table > tbody > tr > td > input[type=text]";
         Element inputElement = doc2.select(phoneNumberSelector).first();
         String phoneNumber = "";
-
         if (inputElement != null) {
             phoneNumber = inputElement.attr("value").trim();
         }
 
-
-
-        Document doc = response.parse();
-        Element link = doc.select("a.d-block").first();
-
-
-
-
-
-        String text = link.html(); // "모바일소프트웨어트랙<br> 웹공학트랙<br> 김동욱"
-
-        String[] split = text.split("<br>");
-
-        String track1 = split[0].trim(); // "모바일소프트웨어트랙"
-        String track2 = split[1].trim(); // "웹공학트랙"
-        String name = split[2].trim(); // 김동욱
+        String gradeText = Objects.requireNonNull(gradeDoc.select("strong.objHeading_h3").first()).text(); // 김동욱 (1971047) 컴퓨터공학부 4 학년 재학
+        // 괄호를 제거하고, 공백을 기준으로 문자열 분리
+        String[] parts = gradeText.replace("(", "").replace(")", "").split(" ");
+        String department = parts[2]; //컴퓨터공학부
+        String grade = parts[3] + parts[4]; //4학년
+        String status = parts[5]; //복학
 
 
         return User.builder()
@@ -188,6 +190,8 @@ public class UserService {
                 .track1(track1)
                 .track2(track2)
                 .phoneNumber(phoneNumber)
+                .grade(grade)
+                .status(status)
                 .build();
     }
 

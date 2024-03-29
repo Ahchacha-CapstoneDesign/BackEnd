@@ -29,6 +29,10 @@ public class User {
 
     private String phoneNumber;
 
+    private String grade;
+
+    private String status;
+
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial; //공공 로그인 or 개인 로그인
 
