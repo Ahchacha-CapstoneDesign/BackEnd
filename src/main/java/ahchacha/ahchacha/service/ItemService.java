@@ -59,6 +59,7 @@ public class ItemService {
                 .returnDateTime(itemDto.getReturnDateTime())
                 .borrowPlace(itemDto.getBorrowPlace())
                 .returnPlace(itemDto.getReturnPlace())
+                .introduction((itemDto.getIntroduction()))
                 .reservation(itemDto.getReservation())
                 .imageUrls(pictureUrls)
                 .category(itemDto.getCategory())
@@ -154,6 +155,10 @@ public class ItemService {
         List<ItemDto.CategoryCountDto> categoryCountDtos = new ArrayList<>();
         for (Object[] result : categoryCounts) {
             Category category = (Category) result[0];
+
+            if (category.equals(Category.기타)) {
+                continue; // '기타' 카테고리인 경우, 리스트에 추가하지 않고 다음 반복으로 넘어감
+            }
             Long viewCount = (Long) result[1];
             categoryCountDtos.add(new ItemDto.CategoryCountDto(category, viewCount.intValue())); // viewCount를 int로 변환하여 저장
         }

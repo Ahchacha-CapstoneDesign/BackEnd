@@ -25,6 +25,7 @@ public class ItemDto {
         private LocalDateTime returnDateTime;
         private String borrowPlace;
         private String returnPlace;
+        private String introduction;
         private Reservation reservation;
         private Category category;
     }
@@ -42,6 +43,7 @@ public class ItemDto {
         private LocalDateTime returnDateTime;
         private String borrowPlace;
         private String returnPlace;
+        private String introduction;
         private Reservation reservation;
         private List<String> imageUrls;
         private Category category;
@@ -61,6 +63,7 @@ public class ItemDto {
                     .returnDateTime(item.getReturnDateTime())
                     .borrowPlace(item.getBorrowPlace())
                     .returnPlace(item.getReturnPlace())
+                    .introduction(item.getIntroduction())
                     .reservation(item.getReservation())
                     .imageUrls(item.getImageUrls())
                     .category(item.getCategory())

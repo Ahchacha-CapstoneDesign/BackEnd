@@ -45,6 +45,10 @@ public class Item extends BaseEntity {
     @Column(nullable = false)
     private String returnPlace; //반납 장소
 
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String introduction; //설명
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Reservation reservation; // 예약 가능, 불가

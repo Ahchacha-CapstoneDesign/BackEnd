@@ -41,6 +41,7 @@ public class ItemController {
                                                           @RequestParam(name = "returnDateTime") LocalDateTime returnDateTime,
                                                           @RequestParam(name = "borrowPlace") String borrowPlace,
                                                           @RequestParam(name = "returnPlace") String returnPlace,
+                                                          @RequestParam(name = "introduction") String introduction,
                                                           @RequestParam(name = "reservation") Reservation reservation,
                                                           @RequestParam(name = "category") Category category,
                                                           HttpSession session){
@@ -52,6 +53,7 @@ public class ItemController {
                 .returnDateTime(returnDateTime)
                 .borrowPlace(borrowPlace)
                 .returnPlace(returnPlace)
+                .introduction(introduction)
                 .reservation(reservation)
                 .category(category)
                 .build();
