@@ -9,8 +9,6 @@ jobs:
   build:
     #ubuntu 버전
     runs-on: ubuntu-22.04
-    env:
-      working-directory: ./project-name
     steps:
       #Checkout 진행
       - uses: actions/checkout@v3
