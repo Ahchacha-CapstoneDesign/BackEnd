@@ -36,8 +36,6 @@ public class AmazonS3Config {
     @Value("${cloud.aws.s3.path.profile}")
     private String profilePath;
 
-    @Value("${cloud.aws.baseUrl}")
-    private String baseUrl;
 
     @PostConstruct
     public void init() {
