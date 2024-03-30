@@ -8,16 +8,17 @@ on:
 jobs:
   build:
     #ubuntu 버전
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
     steps:
       #Checkout 진행
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       # JDK 17 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: 'adopt'
 
       - name: Gradle Caching
         uses: actions/cache@v3
