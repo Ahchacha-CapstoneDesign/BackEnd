@@ -14,6 +14,7 @@ public class UserDto {
     }
 
     @Getter
+    @Setter
     public static class LoginRequestDto {
         private String id;
         private String passwd;

@@ -244,4 +244,28 @@ public class UserService {
         user.setPersonOrOfficial(userType);
         userRepository.save(user);
     }
+
+    public boolean validateCurrentPassword(String password, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+        // 로그인 요청 DTO 생성
+        UserDto.LoginRequestDto loginRequestDto = new UserDto.LoginRequestDto();
+        loginRequestDto.setId(user.getId().toString());
+        loginRequestDto.setPasswd(password);
+        try {
+            ResponseEntity<String> hsportalResponse = getHsportalResponse(loginRequestDto);
+            Document hsportalDocument = Jsoup.parse(Objects.requireNonNull(hsportalResponse.getBody()));
+            // response의 "success" 값 추출
+            Element body = hsportalDocument.body();
+            String jsonString = body.getAllElements().text();
+            JSONObject jsonObject = new JSONObject(jsonString);
+            boolean success = jsonObject.getBoolean("success");
+            // 비밀번호 검증 성공 여부 반환
+            return success;
+        } catch (Exception e) {
+            throw new IllegalStateException("비밀번호가 올바르지 않습니다.");
+        }
+    }
 }

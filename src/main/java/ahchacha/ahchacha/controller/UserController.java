@@ -71,5 +71,21 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "현재 사용자 비밀번호 검증 코드")
+    @PostMapping("/validatePassword")
+    public ResponseEntity<?> validatePassword(@RequestBody String password, HttpSession session) {
+        try {
+            boolean isValid = userService.validateCurrentPassword(password, session);
+            if (isValid) {
+                return ResponseEntity.ok().body("비밀번호 검증에 성공했습니다.");
+            } else {
+                return ResponseEntity.badRequest().body("비밀번호가 올바르지 않습니다.");
+            }
+        } catch (IllegalStateException e) {
+            // 예외 발생 시, 예외 메시지 반환
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 }
