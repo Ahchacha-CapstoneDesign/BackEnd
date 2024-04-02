@@ -9,8 +9,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -87,5 +89,20 @@ public class UserController {
         }
     }
 
+    @Operation(summary = "설정 > 프로필 등록")
+    @PostMapping(value = "/default-profile", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<String> saveProfile(@RequestPart(value = "file", required = false) MultipartFile file, HttpSession session) {
+
+        String userProfile = userService.saveProfile(file, session, "defaultProfile");
+        return new ResponseEntity<>(userProfile, HttpStatus.OK);
+    }
+
+    @Operation(summary = "설정 > 프로필 조회")
+    @GetMapping(value = "/default-profile")
+    public ResponseEntity<String> getProfile(HttpSession session) {
+
+        String userProfile = userService.getProfile(session);
+        return new ResponseEntity<>(userProfile, HttpStatus.OK);
+    }
 
 }
