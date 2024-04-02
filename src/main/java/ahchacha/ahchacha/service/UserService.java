@@ -1,10 +1,13 @@
 package ahchacha.ahchacha.service;
 
 
+import ahchacha.ahchacha.aws.AmazonS3Manager;
 import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.domain.Uuid;
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
 import ahchacha.ahchacha.dto.UserDto;
 import ahchacha.ahchacha.repository.UserRepository;
+import ahchacha.ahchacha.repository.UuidRepository;
 import ahchacha.ahchacha.service.common.ConnectionResponse;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
@@ -24,6 +27,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Service
@@ -31,6 +35,9 @@ import org.slf4j.LoggerFactory;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UuidRepository uuidRepository;
+    private final AmazonS3Manager s3Manager;
+
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     public User login(UserDto.LoginRequestDto loginRequestDto, HttpSession session) throws IOException {
@@ -267,5 +274,47 @@ public class UserService {
         } catch (Exception e) {
             throw new IllegalStateException("비밀번호가 올바르지 않습니다.");
         }
+    }
+
+    public String saveProfile(MultipartFile file, HttpSession session, String category) {
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+
+        // 이미지 업로드
+        String pictureUrl = null;
+        if (file != null){
+            String uuid = UUID.randomUUID().toString();
+            Uuid savedUuid = uuidRepository.save(Uuid.builder()
+                    .uuid(uuid).build());
+            pictureUrl = s3Manager.uploadFile(s3Manager.generateProfileKeyName(savedUuid), file);
+        }
+
+        System.out.println("s3 url(클릭 시 브라우저에 사진 뜨는지 확인): " + pictureUrl);
+
+        // 기존 이미지가 존재하면 S3에서 삭제 후 새 이미지 저장
+        if (category.equals("defaultProfile")) {
+            String oldProfileUrl = user.getDefaultProfile();
+            if (oldProfileUrl != null) {
+                s3Manager.deleteFile(oldProfileUrl);
+            }
+            user.setDefaultProfile(pictureUrl);
+        }
+
+        userRepository.save(user);
+
+        return pictureUrl;
+    }
+
+    public String getProfile(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+
+        return user.getDefaultProfile();
     }
 }
