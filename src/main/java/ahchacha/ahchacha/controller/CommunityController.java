@@ -1,12 +1,14 @@
 package ahchacha.ahchacha.controller;
 
 import ahchacha.ahchacha.domain.Community;
+import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.Category;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.CommentDto;
 import ahchacha.ahchacha.dto.CommunityDto;
 import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.service.CommunityService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.data.domain.Page;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,13 +86,36 @@ public class CommunityController {
         return new ResponseEntity<>(communityDtoPage, HttpStatus.OK);
     }
 
-    @Operation(summary = "게시물 수정")
-    @PatchMapping("/{id}")
-    public CommunityDto.CommunityResponseDto updateCommunity(@PathVariable Long id, @RequestBody CommunityDto.CommunityRequestDto communityRequestDto){
-        return communityService.updateCommunity(id, communityRequestDto);
+//    @Operation(summary = "게시물 수정", description = "id를 입력하세요, 로그인 한 사용자의 게시물이 아니면  수정이 되지않습니다.")
+//    @PatchMapping("/{id}")
+//    public ResponseEntity<?> updateCommunity(@PathVariable Long id, @RequestBody CommunityDto.CommunityRequestDto communityRequestDto, HttpServletRequest request) {
+//        User user = (User) request.getSession().getAttribute("user");
+//        CommunityDto.CommunityResponseDto updatedCommunity = communityService.updateCommunity(id, communityRequestDto, user);
+//        return ResponseEntity.ok(updatedCommunity);
+//    }
+
+    @Operation(summary = "게시물 수정", description = "id와 로그인 한 사용자의 게시물이 아니면 수정이 되지 않습니다.")
+    @PostMapping(path = "/update/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<CommunityDto.CommunityResponseDto> update(@PathVariable Long id,
+                                                                    @RequestPart(value = "file", required = false) List<MultipartFile> files,
+                                                                    @RequestParam(name = "title") String title,
+                                                                    @RequestParam(name = "content") String content,
+                                                                    HttpServletRequest request) {
+        CommunityDto.CommunityRequestDto communityRequestDto = CommunityDto.CommunityRequestDto.builder()
+                .title(title)
+                .content(content)
+                .build();
+
+        User user = (User) request.getSession().getAttribute("user");
+        CommunityDto.CommunityResponseDto updatedCommunity = communityService.updateCommunity(id, communityRequestDto, files, user);
+        return new ResponseEntity<>(updatedCommunity, HttpStatus.OK);
     }
 
-    @Operation(summary = "게시물 삭제")
+    @Operation(summary = "게시물 삭제", description = "id를 입력하세요, 로그인 한 사용자의 게시물이 아니면 삭제가 되지않습니다.")
     @DeleteMapping("/{id}")
-    public void deleteCommunity(@PathVariable Long id){ communityService.deleteCommunity(id); }
+    public ResponseEntity<?> deleteCommunity(@PathVariable Long id, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        communityService.deleteCommunity(id, user);
+        return ResponseEntity.ok().build();
+    }
 }

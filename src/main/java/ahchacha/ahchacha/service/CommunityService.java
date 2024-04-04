@@ -106,15 +106,38 @@ public class CommunityService {
     }
 
     @Transactional
-    public CommunityDto.CommunityResponseDto updateCommunity(Long id, CommunityDto.CommunityRequestDto communityDto){
-        Community community = communityRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-        community.updateCommunity(communityDto.getTitle(), communityDto.getContent(), communityDto.getPictureUrls());
+    public CommunityDto.CommunityResponseDto updateCommunity(Long id, CommunityDto.CommunityRequestDto communityDto, List<MultipartFile> files, User currentUser) {
+        Community community = communityRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid community Id: " + id));
+
+        if (!community.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update this community.");
+        }
+
+        List<String> pictureUrls = new ArrayList<>();
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+                String pictureUrl = s3Manager.uploadFile(s3Manager.generateItemKeyName(savedUuid), file);
+                pictureUrls.add(pictureUrl); // 리스트에 이미지 URL 추가
+
+                System.out.println("s3 url(클릭 시 브라우저에 사진 뜨는지 확인): " + pictureUrl);
+            }
+        }
+
+        community.updateCommunity(communityDto.getTitle(), communityDto.getContent(), pictureUrls);
         return CommunityDto.CommunityResponseDto.toDto(community);
     }
 
+
     @Transactional
-    public void deleteCommunity(Long id){
-        Community community = communityRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+    public void deleteCommunity(Long id, User currentUser){
+        Community community = communityRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid community Id: " + id));
+
+        if (!community.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to delete this community.");
+        }
+
         communityRepository.delete(community);
     }
 
