@@ -37,10 +37,9 @@ public class CommentController {
         commentService.deleteComment(id);
     }
 
-    @PostMapping@Operation(summary = "댓글 조회")
+    @Operation(summary = "댓글 조회")
     @GetMapping("/community/{communityId}")
     public List<CommentDto.CommentResponseDto> getComments(@PathVariable Long communityId, HttpSession session) {
-
         return commentService.getComments(communityId, session);
     }
 
