@@ -61,7 +61,7 @@ public class CommunityService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt")); //최근 작성순
 
-        Pageable pageable = PageRequest.of(page-1, 10, Sort.by(sorts)); //한페이지에 10개
+        Pageable pageable = PageRequest.of(page-1, 1000, Sort.by(sorts));
         Page<Community> communityPage = communityRepository.findAll(pageable);
         return CommunityDto.toDtoPage(communityPage);
 
@@ -72,7 +72,7 @@ public class CommunityService {
         sorts.add(Sort.Order.desc("viewCount"));
         sorts.add(Sort.Order.desc("createdAt"));
 
-        Pageable pageable = PageRequest.of(page-1,10,Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page-1,1000,Sort.by(sorts));
         Page<Community> communityPage = communityRepository.findAll(pageable);
         return CommunityDto.toDtoPage(communityPage);
     }
@@ -82,7 +82,7 @@ public class CommunityService {
         sorts.add(Sort.Order.desc("likeCount"));
         sorts.add(Sort.Order.desc("createdAt"));
 
-        Pageable pageable = PageRequest.of(page-1,10,Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page-1,1000,Sort.by(sorts));
         Page<Community> communityPage = communityRepository.findAll(pageable);
         return CommunityDto.toDtoPage(communityPage);
     }
@@ -91,7 +91,7 @@ public class CommunityService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
 
-        Pageable pageable = PageRequest.of(page-1,10,Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page-1,1000,Sort.by(sorts));
         Page<Community> communityPage = communityRepository.findByTitleContaining(title, pageable);
         return CommunityDto.toDtoPage(communityPage);
     }
@@ -100,7 +100,7 @@ public class CommunityService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
 
-        Pageable pageable = PageRequest.of(page-1,10,Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page-1,1000,Sort.by(sorts));
         Page<Community> communityPage = communityRepository.findByContentContaining(content, pageable);
         return CommunityDto.toDtoPage(communityPage);
     }
