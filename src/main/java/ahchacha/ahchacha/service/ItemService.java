@@ -89,7 +89,7 @@ public class ItemService {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt")); //최근 작성순
 
-        Pageable pageable = PageRequest.of(page-1, 6, Sort.by(sorts)); //한페이지에 6개
+        Pageable pageable = PageRequest.of(page-1, 1000, Sort.by(sorts)); //한페이지에 6개
         Page<Item> itemPage = itemRepository.findAll(pageable);
         return ItemDto.toDtoPage(itemPage);
     }
@@ -99,7 +99,7 @@ public class ItemService {
         sorts.add(Sort.Order.desc("viewCount"));
         sorts.add(Sort.Order.desc("createdAt"));  // 조회수가 동일하면 최신순으로 정렬
 
-        Pageable pageable = PageRequest.of(page-1, 6, Sort.by(sorts)); //한페이지에 6개
+        Pageable pageable = PageRequest.of(page-1, 1000, Sort.by(sorts)); //한페이지에 6개
         Page<Item> itemPage = itemRepository.findAll(pageable);
         return ItemDto.toDtoPage(itemPage);
     }
@@ -109,7 +109,7 @@ public class ItemService {
         sorts.add(Sort.Order.asc("reservation")); //예약가능 여부 정렬 asc : 영문 Y가 N보다 뒤에있어서 오름차순
         sorts.add(Sort.Order.desc("createdAt"));
 
-        Pageable pageable = PageRequest.of(page-1, 6, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page-1, 1000, Sort.by(sorts));
         Page<Item> itemPage = itemRepository.findAll(pageable);
         return ItemDto.toDtoPage(itemPage);
     }
@@ -119,7 +119,7 @@ public class ItemService {
         sorts.add(Sort.Order.desc("personOrOfficial"));
         sorts.add(Sort.Order.desc("createdAt"));
 
-        Pageable pageable = PageRequest.of(page-1, 6, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page-1, 1000, Sort.by(sorts));
         Page<Item> itemPage = itemRepository.findAll(pageable);
         return ItemDto.toDtoPage(itemPage);
     }
@@ -127,7 +127,7 @@ public class ItemService {
     public Page<ItemDto.ItemResponseDto> searchItemByTitle(String title,int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
-        Pageable pageable = PageRequest.of(page - 1, 6, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
 
         Page<Item> itemPage;
 
@@ -139,7 +139,7 @@ public class ItemService {
     public Page<ItemDto.ItemResponseDto> searchItemByCategory(String categoryStr, int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
-        Pageable pageable = PageRequest.of(page - 1, 6, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
 
         // String to Category enum
         Category category = Category.valueOf(categoryStr.toUpperCase());
