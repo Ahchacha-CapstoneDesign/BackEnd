@@ -3,6 +3,7 @@ package ahchacha.ahchacha.domain;
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -35,6 +36,11 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "parent_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment parentId;
+
+    @Setter
+    @ColumnDefault("0")
+    @Column(name = "like_count")
+    private int likeCount;
 
     public void updateContent(String content) {
         this.content = null;

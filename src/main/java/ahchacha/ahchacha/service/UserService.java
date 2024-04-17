@@ -307,6 +307,26 @@ public class UserService {
 
         return pictureUrl;
     }
+    public void resetProfile(HttpSession session, String category) {
+        User user = (User) session.getAttribute("user");
+
+        if (user == null) {
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+
+        String defaultImageUrl = null;
+
+        // 기존 이미지가 S3에 업로드되어 있다면, 해당 이미지 삭제
+        if (category.equals("defaultProfile")) {
+            String oldProfileUrl = user.getDefaultProfile();
+            if (oldProfileUrl != null) {
+                s3Manager.deleteFile(oldProfileUrl);
+            }
+            user.setDefaultProfile(defaultImageUrl);
+        }
+
+        userRepository.save(user);
+    }
 
     public String getProfile(HttpSession session) {
         User user = (User) session.getAttribute("user");

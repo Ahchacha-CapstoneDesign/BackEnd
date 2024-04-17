@@ -2,10 +2,12 @@ package ahchacha.ahchacha.service;
 
 import ahchacha.ahchacha.domain.Comment;
 import ahchacha.ahchacha.domain.Community;
+import ahchacha.ahchacha.domain.Notification;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.dto.CommentDto;
 import ahchacha.ahchacha.repository.CommentRepository;
 import ahchacha.ahchacha.repository.CommunityRepository;
+import ahchacha.ahchacha.repository.NotificationRepository;
 import ahchacha.ahchacha.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -22,6 +24,7 @@ public class CommentService {
     private CommentRepository commentRepository;
     private UserRepository userRepository;
     private CommunityRepository communityRepository;
+    private NotificationRepository notificationRepository;
 
     @Transactional
     public CommentDto.CommentResponseDto  createComment(CommentDto.CommentRequestDto commentDto, HttpSession session) {
@@ -39,25 +42,35 @@ public class CommentService {
         community.get().setCommentCount(community.get().getCommentCount() + 1);
         communityRepository.save(community.get());
 
+        sendNotification(savedComment.getCommunity().getUser(), savedComment);
+
         return CommentDto.CommentResponseDto.toDto(savedComment);
     }
 
     @Transactional
-    public CommentDto.CommentResponseDto updateComment(Long id, CommentDto.CommentRequestDto commentDto) {
+    public CommentDto.CommentResponseDto updateComment(Long id, CommentDto.CommentRequestDto commentDto, User currentUser) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update this comment.");
+        }
+
         comment.updateContent(commentDto.getContent());
         return CommentDto.CommentResponseDto.toDto(comment);
     }
 
     @Transactional
-    public void deleteComment(Long id) {
+    public void deleteComment(Long id, User currentUser) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to delete this comment.");
+        }
         commentRepository.delete(comment);
     }
 
     @Transactional(readOnly = true)
-    public List<CommentDto.CommentResponseDto> getComments(Long communityId, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+    public List<CommentDto.CommentResponseDto> getComments(Long communityId) {
         List<Comment> comments = commentRepository.findAllByCommunityId(communityId);
 
         return comments.stream().map(comment -> {
@@ -87,6 +100,18 @@ public class CommentService {
         community.get().setReplyCount(community.get().getReplyCount() + 1);
         communityRepository.save(community.get());
 
+        sendNotification(savedComment.getCommunity().getUser(), savedComment);
+
         return CommentDto.CommentResponseDto.toDto(savedComment);
+    }
+
+    private void sendNotification(User user, Comment comment) {
+        Notification notification = Notification.builder()
+                .user(user)
+                .comment(comment)
+                .isRead(false)  // 초기에 알림은 읽지 않음
+                .build();
+
+        notificationRepository.save(notification);
     }
 }

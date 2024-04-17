@@ -97,6 +97,15 @@ public class UserController {
         return new ResponseEntity<>(userProfile, HttpStatus.OK);
     }
 
+    @Operation(summary = "설정 > 기본 프로필 사진으로 변경 ")
+    @PostMapping("/reset-profile")
+    public ResponseEntity<String> resetProfile(HttpSession session){
+        User user = (User) session.getAttribute("user");
+
+        userService.resetProfile(session,"defaultProfile");
+        return ResponseEntity.ok("프로필이 기본상태로 변경되었습니다.");
+    }
+
     @Operation(summary = "설정 > 프로필 조회")
     @GetMapping(value = "/default-profile")
     public ResponseEntity<String> getProfile(HttpSession session) {
