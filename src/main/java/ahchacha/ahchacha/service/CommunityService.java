@@ -57,6 +57,7 @@ public class CommunityService {
         return CommunityDto.CommunityResponseDto.toDto(createdBoard);
     }
 
+    // 커뮤니티 상세 조회
     public Optional<CommunityDto.CommunityResponseDto> getCommunityById(Long id) {
         Optional<Community> optionalCommunity = communityRepository.findById(id);
 
