@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/likes") // 기본 URL 경로 설정
 public class HeartController {
 
     private final HeartService heartService;
