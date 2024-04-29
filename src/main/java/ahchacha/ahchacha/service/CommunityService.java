@@ -57,6 +57,19 @@ public class CommunityService {
         return CommunityDto.CommunityResponseDto.toDto(createdBoard);
     }
 
+    public Optional<CommunityDto.CommunityResponseDto> getCommunityById(Long id) {
+        Optional<Community> optionalCommunity = communityRepository.findById(id);
+
+        if (optionalCommunity.isPresent()) {
+            Community community= optionalCommunity.get();
+
+            community.setViewCount(community.getViewCount()+1);
+            communityRepository.save(community);
+        }
+
+        return optionalCommunity.map(CommunityDto.CommunityResponseDto::toDto);
+    }
+
     public Page<CommunityDto.CommunityResponseDto> getAllCommunity(int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt")); //최근 작성순

@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -47,6 +48,15 @@ public class CommunityController {
 
         CommunityDto.CommunityResponseDto communityResponseDto = communityService.createBoard(communityRequestDto,files,session);
         return new ResponseEntity<>(communityResponseDto, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "커뮤니티 상세 조회", description = "{communityId} 자리에 상세 조회할 커뮤니티 id를 전달해주세요.")
+    @GetMapping("/{communityId}")
+    public ResponseEntity<CommunityDto.CommunityResponseDto> getCommunityId(@PathVariable Long communityId) {
+        Optional<CommunityDto.CommunityResponseDto> optionalCommunityDto = communityService.getCommunityById(communityId);
+
+        return optionalCommunityDto.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @Operation(summary = "게시물 목록 조회")
