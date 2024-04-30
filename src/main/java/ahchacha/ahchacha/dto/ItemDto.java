@@ -20,7 +20,7 @@ public class ItemDto {
     public static class ItemRequestDto {
         private String title;
         private int pricePerHour;
-        private int firstPrice;
+//        private int firstPrice;
         private LocalDateTime canBorrowDateTime;
         private LocalDateTime returnDateTime;
         private String borrowPlace;
@@ -38,7 +38,7 @@ public class ItemDto {
         private Long id;
         private String title;
         private int pricePerHour;
-        private int firstPrice;
+//        private int firstPrice;
         private LocalDateTime canBorrowDateTime;
         private LocalDateTime returnDateTime;
         private String borrowPlace;
@@ -58,7 +58,7 @@ public class ItemDto {
                     .id(item.getId())
                     .title(item.getTitle())
                     .pricePerHour(item.getPricePerHour())
-                    .firstPrice(item.getFirstPrice())
+//                    .firstPrice(item.getFirstPrice())
                     .canBorrowDateTime(item.getCanBorrowDateTime())
                     .returnDateTime(item.getReturnDateTime())
                     .borrowPlace(item.getBorrowPlace())
