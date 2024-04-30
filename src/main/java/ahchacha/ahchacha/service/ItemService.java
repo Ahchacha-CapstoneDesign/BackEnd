@@ -54,7 +54,7 @@ public class ItemService {
                 .user(user)
                 .title(itemDto.getTitle())
                 .pricePerHour(itemDto.getPricePerHour())
-                .firstPrice(itemDto.getFirstPrice())
+//                .firstPrice(itemDto.getFirstPrice())
                 .canBorrowDateTime(itemDto.getCanBorrowDateTime())
                 .returnDateTime(itemDto.getReturnDateTime())
                 .borrowPlace(itemDto.getBorrowPlace())
@@ -66,7 +66,7 @@ public class ItemService {
                 .personOrOfficial(user.getPersonOrOfficial())
                 .build();
 
-        item.setFirstPrice(itemDto.getPricePerHour());
+//        item.setFirstPrice(itemDto.getPricePerHour());
 
         Item createdItem = itemRepository.save(item);
         return ItemDto.ItemResponseDto.toDto(createdItem);
