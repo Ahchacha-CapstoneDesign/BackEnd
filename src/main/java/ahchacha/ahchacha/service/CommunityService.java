@@ -64,7 +64,6 @@ public class CommunityService {
         if (optionalCommunity.isPresent()) {
             Community community= optionalCommunity.get();
 
-            community.setViewCount(community.getViewCount()+1);
             communityRepository.save(community);
         }
 
