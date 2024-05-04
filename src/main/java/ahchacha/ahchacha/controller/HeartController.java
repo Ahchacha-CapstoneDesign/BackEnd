@@ -50,11 +50,11 @@ public class HeartController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "댓글 좋아요 여부 확인", description = "{commendId} 자리에 댓글 id를 전달해주세요. 좋아요한 경우 true, 좋아요 안 한 경우 false 반환")
-    @GetMapping("/likes/comment/{commendId}")
-    public ResponseEntity<Boolean> validateIfUserLikedComment(@PathVariable Long commendId, HttpServletRequest request){
+    @Operation(summary = "댓글 좋아요 여부 확인", description = "{commentId} 자리에 댓글 id를 전달해주세요. 좋아요한 경우 true, 좋아요 안 한 경우 false 반환")
+    @GetMapping("/likes/comment/{commentId}")
+    public ResponseEntity<Boolean> validateIfUserLikedComment(@PathVariable Long commentId, HttpServletRequest request){
         User user = (User) request.getSession().getAttribute("user");
-        Boolean isLiked = heartService.validateIfUserLikedComment(commendId, request.getSession());
+        Boolean isLiked = heartService.validateIfUserLikedComment(commentId, request.getSession());
 
         return ResponseEntity.ok(isLiked);
     }
