@@ -31,6 +31,7 @@ public class CommunityDto {
         private int likeCount;
         private int commentCount;
         private int replyCount;
+        private int totalCommentsCount;
         private String nickname;
         private String profileUrl;
         private LocalDateTime createdAt;
@@ -46,6 +47,7 @@ public class CommunityDto {
                     .likeCount(community.getLikeCount())
                     .commentCount((community.getCommentCount()))
                     .replyCount(community.getReplyCount())
+                    .totalCommentsCount(community.getCommentCount() + community.getReplyCount()) // 총 댓글 수 계산
                     .nickname(community.getUser().getNickname())
                     .profileUrl(community.getUser().getDefaultProfile())
                     .createdAt(community.getCreatedAt())

@@ -130,5 +130,14 @@ public class HeartService {
         notificationRepository.save(notification);
     }
 
+    public Boolean validateIfUserLikedComment(Long commentId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
+
+        Optional<Heart> likeOptional = checkIfUserLikedComment(user, comment);
+        return likeOptional.isPresent();
+    }
+
 
 }

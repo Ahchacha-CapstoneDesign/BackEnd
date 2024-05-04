@@ -49,4 +49,13 @@ public class HeartController {
         heartService.deleteCommentLike(commentId, session);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "댓글 좋아요 여부 확인", description = "{commendId} 자리에 댓글 id를 전달해주세요. 좋아요한 경우 true, 좋아요 안 한 경우 false 반환")
+    @GetMapping("/likes/comment/{commendId}")
+    public ResponseEntity<Boolean> validateIfUserLikedComment(@PathVariable Long commendId, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        Boolean isLiked = heartService.validateIfUserLikedComment(commendId, request.getSession());
+
+        return ResponseEntity.ok(isLiked);
+    }
 }
