@@ -32,6 +32,7 @@ public class CommunityDto {
         private int commentCount;
         private int replyCount;
         private String nickname;
+        private String profileUrl;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
@@ -46,6 +47,7 @@ public class CommunityDto {
                     .commentCount((community.getCommentCount()))
                     .replyCount(community.getReplyCount())
                     .nickname(community.getUser().getNickname())
+                    .profileUrl(community.getUser().getDefaultProfile())
                     .createdAt(community.getCreatedAt())
                     .updatedAt(community.getUpdatedAt())
                     .build();

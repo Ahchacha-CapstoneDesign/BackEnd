@@ -29,8 +29,10 @@ public class CommentDto {
         private Long communityId;
         private Long id;
         private Long parentId;
+        private int likeCount;
         private String content;
         private String nickname;
+        private String profileUrl;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
         private int replyCount;
@@ -40,8 +42,10 @@ public class CommentDto {
                     .communityId(comment.getCommunity().getId())
                     .id(comment.getId())
                     .parentId(comment.getParentId() != null ? comment.getParentId().getId() : null)
+                    .likeCount(comment.getLikeCount())
                     .content(comment.getContent())
                     .nickname(comment.getUser().getNickname())
+                    .profileUrl(comment.getUser().getDefaultProfile())
                     .createdAt(comment.getCreatedAt())
                     .updatedAt(comment.getUpdatedAt())
                     .build();
@@ -52,8 +56,10 @@ public class CommentDto {
                     .communityId(comment.getCommunity().getId())
                     .id(comment.getId())
                     .parentId(comment.getParentId() != null ? comment.getParentId().getId() : null)
+                    .likeCount(comment.getLikeCount())
                     .content(comment.getContent())
                     .nickname(comment.getUser().getNickname())
+                    .profileUrl(comment.getUser().getDefaultProfile())
                     .createdAt(comment.getCreatedAt())
                     .updatedAt(comment.getUpdatedAt())
                     .replyCount(replyCount)

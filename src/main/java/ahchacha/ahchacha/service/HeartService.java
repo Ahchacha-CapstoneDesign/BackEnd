@@ -66,6 +66,15 @@ public class HeartService {
         }
     }
 
+    public Boolean validateIfUserLikedCommunity(Long communityId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Community community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new IllegalArgumentException("개시글을 찾을 수 없습니다."));
+
+        Optional<Heart> likeOptional = checkIfUserLiked(user, community);
+        return likeOptional.isPresent();
+    }
+
     public Optional<Heart> checkIfUserLikedComment(User user, Comment comment) {
         return heartRepository.findByUserAndComment(user, comment);
     }
