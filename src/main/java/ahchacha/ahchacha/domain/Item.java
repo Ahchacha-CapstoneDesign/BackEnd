@@ -30,9 +30,6 @@ public class Item extends BaseEntity {
     @Column(name = "pricePerHour")
     private int pricePerHour; //대여비
 
-//    @Column(name = "first_price")
-//    private int firstPrice; //보증금
-
     @Column(name = "canBorrowDateTime")
     private LocalDateTime canBorrowDateTime; //대여가능 날짜,시간
 
@@ -69,12 +66,6 @@ public class Item extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial;
-
-//    public void setFirstPrice(int pricePerHour) {
-//        this.pricePerHour = pricePerHour;
-//        // 대여비의 10% -> 보증금
-//        this.firstPrice = (int) (pricePerHour * 0.1);
-//    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
