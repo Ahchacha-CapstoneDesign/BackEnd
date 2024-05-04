@@ -5,6 +5,7 @@ import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
 import ahchacha.ahchacha.domain.common.enums.Category;
+import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.repository.UserRepository;
@@ -18,10 +19,7 @@ import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -176,5 +174,20 @@ public class ItemService {
         }
 
         itemRepository.deleteById(itemId);
+    }
+
+    @Transactional
+    public ItemDto.ItemResponseDto updateReservation(Long itemId, Reservation reservation, User currentUser) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid item Id: " + itemId));
+
+        if (!item.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update this item.");
+        }
+
+        item.setReservation(Reservation.NO);
+
+        Item updatedItem = itemRepository.save(item);
+        return ItemDto.ItemResponseDto.toDto(updatedItem);
     }
 }

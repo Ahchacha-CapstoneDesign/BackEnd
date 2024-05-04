@@ -132,4 +132,14 @@ public class ItemController {
         itemService.deleteItem(itemId, user);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "아이템 예약 가능 여부 업데이트")
+    @PatchMapping("/{itemId}/reservation")
+    public ResponseEntity<ItemDto.ItemResponseDto> updateReservation(
+            @PathVariable Long itemId,
+            HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        ItemDto.ItemResponseDto updatedItem = itemService.updateReservation(itemId, Reservation.NO, user);
+        return ResponseEntity.ok(updatedItem);
+    }
 }
