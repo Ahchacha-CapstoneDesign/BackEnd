@@ -64,8 +64,6 @@ public class ItemService {
                 .personOrOfficial(user.getPersonOrOfficial())
                 .build();
 
-//        item.setFirstPrice(itemDto.getPricePerHour());
-
         Item createdItem = itemRepository.save(item);
         return ItemDto.ItemResponseDto.toDto(createdItem);
     }
@@ -174,20 +172,5 @@ public class ItemService {
         }
 
         itemRepository.deleteById(itemId);
-    }
-
-    @Transactional
-    public ItemDto.ItemResponseDto updateReservation(Long itemId, Reservation reservation, User currentUser) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid item Id: " + itemId));
-
-        if (!item.getUser().getId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You do not have permission to update this item.");
-        }
-
-        item.setReservation(Reservation.NO);
-
-        Item updatedItem = itemRepository.save(item);
-        return ItemDto.ItemResponseDto.toDto(updatedItem);
     }
 }
