@@ -29,7 +29,8 @@ public class ReservationService {
         Item item = itemRepository.findById(reservationDTO.getItemId())
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
 
-        long hoursBetween = ChronoUnit.HOURS.between(reservationDTO.getBorrowTime(), reservationDTO.getReturnTime());
+        long minutesBetween = ChronoUnit.MINUTES.between(reservationDTO.getBorrowTime(), reservationDTO.getReturnTime());
+        double hoursBetween = minutesBetween / 60.0; // 분을 시간으로 변환
         int totalPrice = (int) (hoursBetween * item.getPricePerHour());
 
         String itemRegisterDefaultProfile = item.getUser().getDefaultProfile(); //아이템 등록한사람의 프로필
