@@ -44,8 +44,8 @@ public class ItemDto {
         private String borrowPlace;
         private String returnPlace;
         private String introduction;
-//        private Reservation reservation;
-//        private RentingStatus rentingStatus;
+        private Reservation reservation;
+        private RentingStatus rentingStatus;
         private List<String> imageUrls;
         private Category category;
         private int viewCount;
@@ -64,8 +64,8 @@ public class ItemDto {
                     .borrowPlace(item.getBorrowPlace())
                     .returnPlace(item.getReturnPlace())
                     .introduction(item.getIntroduction())
-//                    .reservation(item.getReservation())
-//                    .rentingStatus(item.getRentingStatus())
+                    .reservation(item.getReservation())
+                    .rentingStatus(item.getRentingStatus())
                     .imageUrls(item.getImageUrls())
                     .category(item.getCategory())
                     .viewCount(item.getViewCount())
