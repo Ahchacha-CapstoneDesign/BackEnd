@@ -5,6 +5,7 @@ import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
 import ahchacha.ahchacha.domain.common.enums.Category;
+import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.repository.ItemRepository;
@@ -52,13 +53,13 @@ public class ItemService {
                 .user(user)
                 .title(itemDto.getTitle())
                 .pricePerHour(itemDto.getPricePerHour())
-//                .firstPrice(itemDto.getFirstPrice())
                 .canBorrowDateTime(itemDto.getCanBorrowDateTime())
                 .returnDateTime(itemDto.getReturnDateTime())
                 .borrowPlace(itemDto.getBorrowPlace())
                 .returnPlace(itemDto.getReturnPlace())
                 .introduction((itemDto.getIntroduction()))
-                .reservation(itemDto.getReservation())
+                .reservation(Reservation.YES)
+                .rentingStatus(RentingStatus.NONE)
                 .imageUrls(pictureUrls)
                 .category(itemDto.getCategory())
                 .personOrOfficial(user.getPersonOrOfficial())

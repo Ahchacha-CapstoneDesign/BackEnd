@@ -3,6 +3,7 @@ package ahchacha.ahchacha.domain;
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import ahchacha.ahchacha.domain.common.enums.Category;
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
+import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
 import jakarta.persistence.*;
 import lombok.*;
@@ -50,6 +51,10 @@ public class Item extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Reservation reservation; // 예약 가능, 불가
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RentingStatus rentingStatus;
 
     @ElementCollection
     @CollectionTable(name = "item_images", joinColumns = @JoinColumn(name = "item_id"))
