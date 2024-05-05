@@ -48,7 +48,7 @@ public class ReservationService {
                 .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
                 .build();
 
-        item.setReservation(ahchacha.ahchacha.domain.common.enums.Reservation.NO); // 예약 가능 상태를 NO로 설정
+        item.setReservation(ahchacha.ahchacha.domain.common.enums.Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약완료
         reservationRepository.save(reservation);
     }
 
