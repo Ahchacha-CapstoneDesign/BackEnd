@@ -94,6 +94,46 @@ public class ItemService {
     }
 
     @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByReservationYes(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndReservation(user, Reservation.YES, pageable);
+        return ItemDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByReserved(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndRentingStatus(user, RentingStatus.RESERVED, pageable);
+        return ItemDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByRenting(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndRentingStatus(user, RentingStatus.RENTING, pageable);
+        return ItemDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByReturned(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndRentingStatus(user, RentingStatus.RETURNED, pageable);
+        return ItemDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
     public void updateReservedToRentingStatusForItem(Item item) { //예약완료 -> 대여중 (등록한 사람이 하는 것)
         if (item.getReservation() == Reservation.NO && item.getRentingStatus() == RentingStatus.RESERVED) {
             item.setRentingStatus(RentingStatus.RENTING);
@@ -105,7 +145,6 @@ public class ItemService {
     public void updateRentingToReturnedStatusForItem(Item item) { //대여중 -> 반납완료 (등록한 사람이 하는 것)
         if (item.getReservation() == Reservation.NO && item.getRentingStatus() == RentingStatus.RENTING) {
             item.setRentingStatus(RentingStatus.RETURNED);
-            item.setReservation(Reservation.YES);
             itemRepository.save(item);
         }
     }

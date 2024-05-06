@@ -77,6 +77,50 @@ public class ItemController {
         return ResponseEntity.ok(myItems);
     }
 
+    @Operation(summary = "대여가능 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/reservationYES")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReservationYes(HttpServletRequest request,
+                                                                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByReservationYes(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
+    @Operation(summary = "예약완료 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/rentingStatusRESERVED")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReserved(HttpServletRequest request,
+                                                                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByReserved(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
+    @Operation(summary = "대여중 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/rentingStatusRENTING")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByRenting(HttpServletRequest request,
+                                                                               @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByRenting(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
+    @Operation(summary = "반납완료 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/rentingStatusRETURNED")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReturned(HttpServletRequest request,
+                                                                              @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByReturned(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
     @Operation(summary = "예약완료 아이템 대여중으로 변경", description = "대여처리 시 rentingStatus: RESERVED -> RENTING")
     @PatchMapping("/{itemId}/updateReservedToRenting")
     public ResponseEntity<String> updateReservedToRentingStatusForItem(@PathVariable Long itemId, HttpSession session) {
@@ -99,8 +143,7 @@ public class ItemController {
         return ResponseEntity.ok("Renting status updated successfully.");
     }
 
-    @Operation(summary = "대여중 아이템 반납완료로 변경", description = "반납처리 시 RENTINGSTATUS: RENTING -> RETURNED\n\n" +
-            "RESERVATION: NO -> YES")
+    @Operation(summary = "대여중 아이템 반납완료로 변경", description = "반납처리 시 RENTINGSTATUS: RENTING -> RETURNED")
     @PatchMapping("/{itemId}/updateRentingToReturned")
     public ResponseEntity<String> updateRentingToReturnedStatusForItem(@PathVariable Long itemId, HttpSession session) {
         Item item = itemRepository.findById(itemId)
