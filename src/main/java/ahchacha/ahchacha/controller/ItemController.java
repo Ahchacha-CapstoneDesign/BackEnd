@@ -7,10 +7,12 @@ import ahchacha.ahchacha.domain.common.enums.ItemStatus;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ItemDto;
+import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -25,14 +27,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
-    @Autowired
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
+
 
     @Operation(summary = "아이템 등록", description = "canBorrowDateTime/returnDateTime 예시 : 2024-03-17T10:26:08")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -64,9 +65,43 @@ public class ItemController {
         return new ResponseEntity<>(itemResponseDto, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "내가 등록한 item들 조회")
+    @GetMapping("/myItems")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getMyItems(HttpServletRequest request,
+                                                                    @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> myItems = itemService.getAllMyRegisteredItems(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "예약완료 아이템 대여중으로 변경", description = "예약완료시 rentingStatus: RESERVED -> RENTING")
+    @PatchMapping("/{itemId}/updateRentingStatus")
+    public ResponseEntity<String> updateRentingStatusForItem(@PathVariable Long itemId, HttpSession session) {
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid item Id: " + itemId));
+
+        User currentUser = (User) session.getAttribute("user");
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated.");
+        }
+
+        if (!item.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update the renting status of this item.");
+        }
+
+        // updateRentingStatusForItem 메서드를 호출하여 아이템의 대여 상태를 업데이트합니다.
+        itemService.updateRentingStatusForItem(item);
+
+        return ResponseEntity.ok("Renting status updated successfully.");
+    }
+
     @Operation(summary = "아이템 상세 조회", description = "{itemId} 자리에 상세 조회할 아이템 id를 전달해주세요.")
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto.ItemResponseDto> getTalkById(@PathVariable Long itemId) {
+    public ResponseEntity<ItemDto.ItemResponseDto> getItemById(@PathVariable Long itemId) {
         Optional<ItemDto.ItemResponseDto> optionalItemDto = itemService.getItemById(itemId);
 
         return optionalItemDto.map(ResponseEntity::ok)
@@ -82,7 +117,7 @@ public class ItemController {
 
     @Operation(summary = "조회수 많은 순으로 아이템 목록 조회")
     @GetMapping("/view-counts")
-    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllTalksByViewCounts(@RequestParam(value = "page", defaultValue = "1") int page) {
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByViewCounts(@RequestParam(value = "page", defaultValue = "1") int page) {
         Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByViewCount(page);
         return ResponseEntity.ok(itemsDtoPage);
     }

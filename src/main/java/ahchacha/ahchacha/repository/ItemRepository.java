@@ -1,6 +1,7 @@
 package ahchacha.ahchacha.repository;
 
 import ahchacha.ahchacha.domain.Item;
+import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.Category;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,8 @@ import java.util.Optional;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
     Optional<Item> findByIdAndBorrowPlaceAndReturnPlace(Long id, String borrowPlace, String returnPlace);
+
+    Page<Item> findByUser(User user, Pageable pageable);
 
     Page<Item> findAll(Pageable pageable);
 
