@@ -3,6 +3,8 @@ package ahchacha.ahchacha.service;
 import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.domain.common.enums.RentingStatus;
+import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ReservationDto;
 import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.repository.ReservationRepository;
@@ -48,7 +50,8 @@ public class ReservationService {
                 .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
                 .build();
 
-        item.setReservation(ahchacha.ahchacha.domain.common.enums.Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약완료
+        item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약불가
+        item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
     }
 
@@ -78,6 +81,7 @@ public class ReservationService {
                 .build();
 
         item.setReservation(ahchacha.ahchacha.domain.common.enums.Reservation.NO); // 예약 가능 상태를 NO로 설정
+        item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
     }
 }

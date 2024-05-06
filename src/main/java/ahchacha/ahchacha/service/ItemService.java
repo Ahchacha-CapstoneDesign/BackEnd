@@ -60,6 +60,7 @@ public class ItemService {
                 .introduction((itemDto.getIntroduction()))
                 .reservation(Reservation.YES)
                 .rentingStatus(RentingStatus.NONE)
+                .itemStatus(itemDto.getItemStatus())
                 .imageUrls(pictureUrls)
                 .category(itemDto.getCategory())
                 .personOrOfficial(user.getPersonOrOfficial())
