@@ -1,15 +1,16 @@
 package ahchacha.ahchacha.controller;
 
+import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.dto.ReservationDto;
 import ahchacha.ahchacha.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("reservation")
@@ -31,5 +32,53 @@ public class ReservationController {
     public ResponseEntity<?> createOfficialReservation(@RequestBody ReservationDto.ReservationRequestDto reservationDTO, HttpSession session) {
         reservationService.createOfficialReservation(reservationDTO, session);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "내가 대여한 모든 item들 조회(마이페이지-대여내역)")
+    @GetMapping("/myItems")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getAllItemsInMyPage(HttpServletRequest request,
+                                                                    @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getAllItemsInMyPage(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "내가 대여한 모든 예약완료 item들 조회(마이페이지-대여내역-예약완료)")
+    @GetMapping("/itemsRESERVED")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getAllItemsByReserved(HttpServletRequest request,
+                                                                                           @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getAllItemsByReserved(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "내가 대여한 모든 대여중 item들 조회(마이페이지-대여내역-대여중)")
+    @GetMapping("/itemsRENTING")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getAllItemsByRenting(HttpServletRequest request,
+                                                                              @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getAllItemsByRenting(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "내가 대여한 모든 반납완료 item들 조회(마이페이지-대여내역-반납완료)")
+    @GetMapping("/itemsRENTED")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getAllItemsByReturned(HttpServletRequest request,
+                                                                                            @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getAllItemsByReturned(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
     }
 }
