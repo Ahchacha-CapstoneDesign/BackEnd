@@ -15,5 +15,12 @@ public class ReservationDto {
         private LocalDateTime borrowTime;
         private LocalDateTime returnTime;
     }
+
+//    @Getter
+//    @Setter
+//    @Builder
+//    public static class ItemResponseDto {
+//
+//    }
 }
 

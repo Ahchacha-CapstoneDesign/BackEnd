@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 
 
 @Service
@@ -36,18 +37,24 @@ public class ReservationService {
         int totalPrice = (int) (hoursBetween * item.getPricePerHour());
 
         String itemRegisterDefaultProfile = item.getUser().getDefaultProfile(); //아이템 등록한사람의 프로필
+        String imageUrl = item.getImageUrls().get(0); // 첫번쨰 이미지 추출
 
         Reservations reservation = Reservations.builder()
+                .title(item.getTitle())
+                .rentingStatus(item.getRentingStatus())
+                .rentingStatus(RentingStatus.RESERVED)
                 .borrowTime(reservationDTO.getBorrowTime())
                 .returnTime(reservationDTO.getReturnTime())
                 .totalPrice(totalPrice)
                 .item(item)
+                .itemUserNickName(item.getUser().getNickname())
                 .itemBorrowPlace(item.getBorrowPlace())
                 .itemReturnPlace(item.getReturnPlace())
                 .userNickname(user.getNickname())
                 .userPhoneNumber(user.getPhoneNumber())
                 .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
                 .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
+                .imageUrls(Collections.singletonList(imageUrl))
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약불가
@@ -63,24 +70,30 @@ public class ReservationService {
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
 
         String itemRegisterDefaultProfile = item.getUser().getDefaultProfile(); //아이템 등록한사람의 프로필
+        String imageUrl = item.getImageUrls().get(0); // 첫번쨰 이미지 추출
 
         Reservations reservation = Reservations.builder()
+                .title(item.getTitle())
+                .rentingStatus(item.getRentingStatus())
+                .rentingStatus(RentingStatus.RESERVED)
                 .borrowTime(reservationDTO.getBorrowTime())
                 .returnTime(reservationDTO.getReturnTime())
                 .item(item)
+                .itemUserNickName(item.getUser().getNickname())
+                .itemBorrowPlace(item.getBorrowPlace())
+                .itemReturnPlace(item.getReturnPlace())
                 .user(user) //학번
                 .userName(user.getName()) //이름
                 .userPhoneNumber(user.getPhoneNumber())
                 .userTrack1(user.getTrack1()) //트랙
                 .userGrade(user.getGrade()) //4학년
                 .userStatus(user.getStatus()) //복학
-                .itemBorrowPlace(item.getBorrowPlace())
-                .itemReturnPlace(item.getReturnPlace())
                 .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
                 .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
+                .imageUrls(Collections.singletonList(imageUrl))
                 .build();
 
-        item.setReservation(ahchacha.ahchacha.domain.common.enums.Reservation.NO); // 예약 가능 상태를 NO로 설정
+        item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
     }
