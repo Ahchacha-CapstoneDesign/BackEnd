@@ -83,6 +83,27 @@ public class ItemService {
         return optionalItem.map(ItemDto.ItemResponseDto::toDto);
     }
 
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllMyRegisteredItems(int page, User user) { //내가 등록한 아이템들 보여주기
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        return itemRepository.findByUser(user, pageable)
+                .map(ItemDto.ItemResponseDto::toDto);
+    }
+
+    @Transactional
+    public void updateRentingStatusForItem(Item item) { //예약완료 -> 대여중 (등록한 사람이 하는 것)
+        // 해당 아이템이 "reservation"이 "NO"이고 "rentingStatus"가 "RESERVED"인지 확인합니다.
+        if (item.getReservation() == Reservation.NO && item.getRentingStatus() == RentingStatus.RESERVED) {
+            // 아이템의 "rentingStatus"를 "RENTING"으로 변경합니다.
+            item.setRentingStatus(RentingStatus.RENTING);
+            // 변경된 상태를 데이터베이스에 반영합니다.
+            itemRepository.save(item);
+        }
+    }
+
     public Page<ItemDto.ItemResponseDto> getAllItems(int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt")); //최근 작성순
