@@ -1,10 +1,7 @@
 package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
-import ahchacha.ahchacha.domain.common.enums.Category;
-import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
-import ahchacha.ahchacha.domain.common.enums.RentingStatus;
-import ahchacha.ahchacha.domain.common.enums.Reservation;
+import ahchacha.ahchacha.domain.common.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -54,7 +51,11 @@ public class Item extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RentingStatus rentingStatus;
+    private RentingStatus rentingStatus; // NONE, 예약완료, 대여중, 반납완료
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ItemStatus itemStatus; //새상품, 사용감 없음, 사용감적음, 사용감많음, 파손/고장상품
 
     @ElementCollection
     @CollectionTable(name = "item_images", joinColumns = @JoinColumn(name = "item_id"))

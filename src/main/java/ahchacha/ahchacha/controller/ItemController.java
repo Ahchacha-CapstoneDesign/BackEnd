@@ -3,6 +3,7 @@ package ahchacha.ahchacha.controller;
 import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.Category;
+import ahchacha.ahchacha.domain.common.enums.ItemStatus;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ItemDto;
@@ -43,8 +44,7 @@ public class ItemController {
                                                           @RequestParam(name = "borrowPlace") String borrowPlace,
                                                           @RequestParam(name = "returnPlace") String returnPlace,
                                                           @RequestParam(name = "introduction") String introduction,
-//                                                          @RequestParam(name = "reservation") Reservation reservation,
-//                                                          @RequestParam(name = "rentingstatus") RentingStatus rentingStatus,
+                                                          @RequestParam(name = "itemStatus") ItemStatus itemStatus,
                                                           @RequestParam(name = "category") Category category,
                                                           HttpSession session){
 
@@ -56,8 +56,7 @@ public class ItemController {
                 .borrowPlace(borrowPlace)
                 .returnPlace(returnPlace)
                 .introduction(introduction)
-//                .reservation(reservation)
-//                .rentingStatus(rentingStatus)
+                .itemStatus(itemStatus)
                 .category(category)
                 .build();
 

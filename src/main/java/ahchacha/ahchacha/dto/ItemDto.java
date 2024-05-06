@@ -1,11 +1,7 @@
 package ahchacha.ahchacha.dto;
 
 import ahchacha.ahchacha.domain.Item;
-import ahchacha.ahchacha.domain.User;
-import ahchacha.ahchacha.domain.common.enums.Category;
-import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
-import ahchacha.ahchacha.domain.common.enums.RentingStatus;
-import ahchacha.ahchacha.domain.common.enums.Reservation;
+import ahchacha.ahchacha.domain.common.enums.*;
 import lombok.*;
 import org.springframework.data.domain.Page;
 import java.time.LocalDateTime;
@@ -26,8 +22,7 @@ public class ItemDto {
         private String borrowPlace;
         private String returnPlace;
         private String introduction;
-//        private Reservation reservation;
-//        private RentingStatus rentingStatus;
+        private ItemStatus itemStatus;
         private Category category;
     }
 
@@ -46,6 +41,7 @@ public class ItemDto {
         private String introduction;
         private Reservation reservation;
         private RentingStatus rentingStatus;
+        private ItemStatus itemStatus;
         private List<String> imageUrls;
         private Category category;
         private int viewCount;
@@ -66,6 +62,7 @@ public class ItemDto {
                     .introduction(item.getIntroduction())
                     .reservation(item.getReservation())
                     .rentingStatus(item.getRentingStatus())
+                    .itemStatus(item.getItemStatus())
                     .imageUrls(item.getImageUrls())
                     .category(item.getCategory())
                     .viewCount(item.getViewCount())
