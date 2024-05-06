@@ -2,6 +2,7 @@ package ahchacha.ahchacha.service;
 
 import ahchacha.ahchacha.aws.AmazonS3Manager;
 import ahchacha.ahchacha.domain.Item;
+import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
 import ahchacha.ahchacha.domain.common.enums.Category;
@@ -9,6 +10,7 @@ import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.repository.ItemRepository;
+import ahchacha.ahchacha.repository.ReservationRepository;
 import ahchacha.ahchacha.repository.UserRepository;
 import ahchacha.ahchacha.repository.UuidRepository;
 import jakarta.servlet.http.HttpSession;
@@ -28,6 +30,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public ItemDto.ItemResponseDto createItem(ItemDto.ItemRequestDto itemDto,
@@ -138,6 +141,14 @@ public class ItemService {
         if (item.getReservation() == Reservation.NO && item.getRentingStatus() == RentingStatus.RESERVED) {
             item.setRentingStatus(RentingStatus.RENTING);
             itemRepository.save(item);
+
+            List<Reservations> reservations = item.getReservations();
+            if (reservations != null) {
+                for (Reservations reservation : reservations) {
+                    reservation.setRentingStatus(RentingStatus.RENTING);
+                    reservationRepository.save(reservation);
+                }
+            }
         }
     }
 
@@ -146,6 +157,14 @@ public class ItemService {
         if (item.getReservation() == Reservation.NO && item.getRentingStatus() == RentingStatus.RENTING) {
             item.setRentingStatus(RentingStatus.RETURNED);
             itemRepository.save(item);
+
+            List<Reservations> reservations = item.getReservations();
+            if (reservations != null) {
+                for (Reservations reservation : reservations) {
+                    reservation.setRentingStatus(RentingStatus.RETURNED);
+                    reservationRepository.save(reservation);
+                }
+            }
         }
     }
 
