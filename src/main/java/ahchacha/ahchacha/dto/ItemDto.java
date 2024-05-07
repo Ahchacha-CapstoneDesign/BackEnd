@@ -48,6 +48,8 @@ public class ItemDto {
         private PersonOrOfficial personOrOfficial;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        private String userProfile; //아이템 등록한사람 프로필
+        private String userNickName; //아이템 등록한사람 닉네임
 
         public static ItemResponseDto toDto(Item item) {
             return ItemResponseDto.builder()
@@ -69,6 +71,8 @@ public class ItemDto {
                     .personOrOfficial(item.getPersonOrOfficial())
                     .createdAt(item.getCreatedAt())
                     .updatedAt(item.getUpdatedAt())
+                    .userProfile(item.getUser().getDefaultProfile())
+                    .userNickName(item.getUser().getNickname())
                     .build();
         }
     }
