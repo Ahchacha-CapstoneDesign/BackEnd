@@ -45,9 +45,31 @@ public class ItemController {
                                                           @RequestParam(name = "borrowPlace") String borrowPlace,
                                                           @RequestParam(name = "returnPlace") String returnPlace,
                                                           @RequestParam(name = "introduction") String introduction,
-                                                          @RequestParam(name = "itemStatus") ItemStatus itemStatus,
+                                                          @RequestParam(name = "itemStatus") String itemStatusString,
                                                           @RequestParam(name = "category") Category category,
                                                           HttpSession session){
+
+        ItemStatus itemStatus;
+        switch (itemStatusString) {
+            case "NEW":
+                itemStatus = ItemStatus.NEW;
+                break;
+            case "LITTLEUSE":
+                itemStatus = ItemStatus.LITTLEUSE;
+                break;
+            case "LESSUSE":
+                itemStatus = ItemStatus.LESSUSE;
+                break;
+            case "MOREUSE":
+                itemStatus = ItemStatus.MOREUSE;
+                break;
+            case "BREAK":
+                itemStatus = ItemStatus.BREAK;
+                break;
+            default:
+                itemStatus = ItemStatus.NEW;
+                break;
+        }
 
         ItemDto.ItemRequestDto itemRequestDto = ItemDto.ItemRequestDto.builder()
                 .title(title)
