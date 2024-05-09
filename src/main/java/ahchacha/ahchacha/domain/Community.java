@@ -1,6 +1,8 @@
 package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -53,16 +55,22 @@ public class Community extends BaseEntity {
     private int replyCount;
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Heart> hearts = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     private User user;
 
     public void updateCommunity(String title, String content, List<String> pictureUrls) {
         this.title = title;
         this.content = content;
-        this.imageUrls=pictureUrls;
+        this.imageUrls = pictureUrls;
     }
 }

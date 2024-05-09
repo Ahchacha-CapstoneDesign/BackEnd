@@ -8,14 +8,20 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@Builder
 public class CommentDto {
 
     @Getter
+    @Setter
+    @Builder
     public static class CommentRequestDto {
         private Long communityId;
         private String content;
     }
     @Getter
+    @Setter
+    @Builder
     public static class ReplyRequestDto {
         private Long communityId;
         private Long parentId;

@@ -1,5 +1,6 @@
 package ahchacha.ahchacha.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -18,16 +19,19 @@ public class Heart {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Community community;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Comment comment;
 

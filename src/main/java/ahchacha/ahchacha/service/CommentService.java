@@ -42,7 +42,7 @@ public class CommentService {
         community.get().setCommentCount(community.get().getCommentCount() + 1);
         communityRepository.save(community.get());
 
-        sendNotification(savedComment.getCommunity().getUser(), savedComment);
+//        sendNotification(savedComment.getCommunity().getUser(), savedComment);
 
         return CommentDto.CommentResponseDto.toDto(savedComment);
     }
@@ -99,8 +99,8 @@ public class CommentService {
         // 댓글 수 업데이트
         community.get().setReplyCount(community.get().getReplyCount() + 1);
         communityRepository.save(community.get());
-
-        sendNotification(savedComment.getCommunity().getUser(), savedComment);
+//
+//        sendNotification(savedComment.getCommunity().getUser(), savedComment);
 
         return CommentDto.CommentResponseDto.toDto(savedComment);
     }

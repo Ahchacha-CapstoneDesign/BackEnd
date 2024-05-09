@@ -2,6 +2,7 @@ package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -53,10 +54,12 @@ public class Reservations extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private User user;
 }

@@ -3,6 +3,7 @@ package ahchacha.ahchacha.domain;
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import ahchacha.ahchacha.domain.common.enums.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -82,9 +83,10 @@ public class Item extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Reservations> reservations = new ArrayList<>();
 
     @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Review review;
-
 }

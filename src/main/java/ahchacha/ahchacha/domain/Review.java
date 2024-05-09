@@ -2,6 +2,7 @@ package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -34,11 +35,13 @@ public class Review extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Item item;
 
