@@ -104,7 +104,8 @@ public class ReservationService {
                 .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
                 .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
                 .imageUrls(Collections.singletonList(imageUrl))
-                .user(user) //학번
+                .user(user) //대여하는 사람의 학번
+                .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약불가

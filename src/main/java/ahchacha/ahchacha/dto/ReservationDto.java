@@ -32,6 +32,7 @@ public class ReservationDto {
 
         private String title;
 
+        private Long itemUserId;
         private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
         private String itemUserNickName;
 
@@ -55,6 +56,7 @@ public class ReservationDto {
 
                     .title(reservations.getTitle())
 
+                    .itemUserId(reservations.getItemUserId())
                     .itemRegisterDefaultProfile(reservations.getItemRegisterDefaultProfile())
                     .itemUserNickName(reservations.getItemUserNickName())
 

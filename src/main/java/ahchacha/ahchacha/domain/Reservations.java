@@ -44,6 +44,7 @@ public class Reservations extends BaseEntity {
     private String userGrade;
     private String userStatus;
 
+    private Long itemUserId; //아이템 등록한사람 id
     private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
     private String userDefaultProfile; //아이템 예약하는사람 프사
 
