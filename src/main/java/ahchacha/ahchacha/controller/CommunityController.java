@@ -50,12 +50,19 @@ public class CommunityController {
         return new ResponseEntity<>(communityResponseDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "커뮤니티 상세 조회", description = "{communityId} 자리에 상세 조회할 커뮤니티 id를 전달해주세요.")
+//    @Operation(summary = "커뮤니티 상세 조회", description = "{communityId} 자리에 상세 조회할 커뮤니티 id를 전달해주세요.")
+//    @GetMapping("/{communityId}")
+//    public ResponseEntity<CommunityDto.CommunityResponseDto> getCommunityId(@PathVariable Long communityId) {
+//        Optional<CommunityDto.CommunityResponseDto> optionalCommunityDto = communityService.getCommunityById(communityId);
+//
+//        return optionalCommunityDto.map(ResponseEntity::ok)
+//                .orElseGet(() -> ResponseEntity.notFound().build());
+//    }
+    @Operation(summary = "커뮤니티 상세 조회", description = "게시물의 상세 정보와 조회수 관리")
     @GetMapping("/{communityId}")
-    public ResponseEntity<CommunityDto.CommunityResponseDto> getCommunityId(@PathVariable Long communityId) {
-        Optional<CommunityDto.CommunityResponseDto> optionalCommunityDto = communityService.getCommunityById(communityId);
-
-        return optionalCommunityDto.map(ResponseEntity::ok)
+    public ResponseEntity<CommunityDto.CommunityResponseDto> getCommunityById(@PathVariable Long communityId, HttpSession session) {
+            Optional<CommunityDto.CommunityResponseDto> optionalCommunityDto = communityService.getCommunityById(communityId, session);
+            return optionalCommunityDto.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

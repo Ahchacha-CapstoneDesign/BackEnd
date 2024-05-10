@@ -17,33 +17,36 @@ public class ReviewDto {
     @Setter
     @Builder
     public static class ReviewRequestDto {
-        private Long itemId;
+        private Long reservationId;
         private String reviewComment;
         private BigDecimal reviewScore;
-        private PersonType personType;
     }
 
     @Getter
     @Setter
     @Builder
-    public static class ReviewResponseDto {
-        private String nickname;
+    public static class ReviewResponseDto { //내가 등록한 물품을 빌린 사람에 대해
         private Long reviewId;
-        private Long itemId;
         private String reviewComment;
         private BigDecimal reviewScore;
+
         private PersonType personType;
+        private String renterNickName;
+        private String renterProfile;
+
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
         public static ReviewResponseDto toDto(Review review) {
             return ReviewResponseDto.builder()
-                    .nickname(review.getUser().getNickname())
                     .reviewId(review.getId())
-                    .itemId(review.getItem().getId())
                     .reviewComment(review.getReviewComment())
                     .reviewScore(review.getReviewScore())
-                    .personType(review.getPersonType())
+
+                    .personType(PersonType.RENTER)
+                    .renterNickName(review.getRenterNickName())
+                    .renterProfile(review.getRenterProfile())
+
                     .createdAt(review.getCreatedAt())
                     .updatedAt(review.getUpdatedAt())
                     .build();

@@ -73,4 +73,8 @@ public class Community extends BaseEntity {
         this.content = content;
         this.imageUrls = pictureUrls;
     }
+
+    public void incrementViewCount() {
+        this.viewCount++;
+    }
 }

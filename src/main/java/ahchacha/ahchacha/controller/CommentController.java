@@ -3,7 +3,6 @@ package ahchacha.ahchacha.controller;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.dto.CommentDto;
 import ahchacha.ahchacha.dto.CommunityDto;
-import ahchacha.ahchacha.dto.ReviewDto;
 import ahchacha.ahchacha.service.CommentService;
 
 import io.swagger.v3.oas.annotations.Operation;
