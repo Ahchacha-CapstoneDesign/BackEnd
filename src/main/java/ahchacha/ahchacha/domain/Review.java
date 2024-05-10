@@ -33,6 +33,9 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private PersonType personType;
 
+    private String renterNickName; //내 물품 빌린사람 닉네임
+    private String renterProfile; //내 물품 빌린사람 프로필
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
@@ -40,9 +43,8 @@ public class Review extends BaseEntity {
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "reservation_id")
     @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
-
+    private Reservations reservations;
 }

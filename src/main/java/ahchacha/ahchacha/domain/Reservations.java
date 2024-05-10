@@ -3,6 +3,7 @@ package ahchacha.ahchacha.domain;
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -44,6 +45,7 @@ public class Reservations extends BaseEntity {
     private String userGrade;
     private String userStatus;
 
+    private Long itemUserId; //아이템 등록한사람 id
     private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
     private String userDefaultProfile; //아이템 예약하는사람 프사
 
@@ -62,4 +64,8 @@ public class Reservations extends BaseEntity {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
+
+    @OneToOne(mappedBy = "reservations", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Review review;
 }

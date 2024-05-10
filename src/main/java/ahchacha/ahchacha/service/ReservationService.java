@@ -86,7 +86,11 @@ public class ReservationService {
         int totalPrice = (int) (hoursBetween * item.getPricePerHour());
 
         String itemRegisterDefaultProfile = item.getUser().getDefaultProfile(); //아이템 등록한사람의 프로필
-        String imageUrl = item.getImageUrls().get(0); // 첫번쨰 이미지 추출
+        String imageUrl = null;
+        List<String> imageUrls = item.getImageUrls();
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            imageUrl = imageUrls.get(0);
+        } // 첫번쨰 이미지 추출
 
         Reservations reservation = Reservations.builder()
                 .title(item.getTitle())
@@ -103,8 +107,11 @@ public class ReservationService {
                 .userPhoneNumber(user.getPhoneNumber())
                 .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
                 .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
-                .imageUrls(Collections.singletonList(imageUrl))
-                .user(user) //학번
+//                .imageUrls(Collections.singletonList(imageUrl))
+                .imageUrls(imageUrl != null ? Collections.singletonList(imageUrl) : null)
+
+                .user(user) //대여하는 사람의 학번
+                .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약불가
@@ -120,7 +127,11 @@ public class ReservationService {
                 .orElseThrow(() -> new IllegalArgumentException("Item not found"));
 
         String itemRegisterDefaultProfile = item.getUser().getDefaultProfile(); //아이템 등록한사람의 프로필
-        String imageUrl = item.getImageUrls().get(0); // 첫번쨰 이미지 추출
+        String imageUrl = null;
+        List<String> imageUrls = item.getImageUrls();
+        if (imageUrls != null && !imageUrls.isEmpty()) {
+            imageUrl = imageUrls.get(0);
+        } // 첫번쨰 이미지 추출
 
         Reservations reservation = Reservations.builder()
                 .title(item.getTitle())
@@ -140,7 +151,9 @@ public class ReservationService {
                 .userStatus(user.getStatus()) //복학
                 .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
                 .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
-                .imageUrls(Collections.singletonList(imageUrl))
+//                .imageUrls(Collections.singletonList(imageUrl))
+                .imageUrls(imageUrl != null ? Collections.singletonList(imageUrl) : null)
+                .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정
