@@ -24,11 +24,19 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @Operation(summary = "내가 등록한 물품을 예약했던 user에 대해 리뷰")
-    @PostMapping("/ownerToRenter")
-    public ResponseEntity<ReviewDto.ReviewResponseDto> createReview(@RequestBody ReviewDto.ReviewRequestDto reviewRequestDto, HttpSession session) {
+    @PostMapping("/toRenter")
+    public ResponseEntity<ReviewDto.ReviewResponseDto> createRenterReview(@RequestBody ReviewDto.ReviewRequestDto reviewRequestDto, HttpSession session) {
 
         ReviewDto.ReviewResponseDto reviewResponseDto = reviewService.createMyItemReview(reviewRequestDto, session);
         return new ResponseEntity<>(reviewResponseDto, HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "내가 반납완료한 아이템의 주인에게 리뷰")
+    @PostMapping("/toOwner")
+    public ResponseEntity<ReviewDto.ReviewRentedResponseDto> createOwnerReview(@RequestBody ReviewDto.ReviewRequestDto reviewRequestDto, HttpSession session) {
+
+        ReviewDto.ReviewRentedResponseDto reviewRentedResponseDto = reviewService.createUserReview(reviewRequestDto, session);
+        return new ResponseEntity<>(reviewRentedResponseDto, HttpStatus.CREATED);
     }
 
 //    @Operation(summary = "리뷰 최신 목록 조회 RENTER")

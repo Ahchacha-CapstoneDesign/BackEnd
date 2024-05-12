@@ -9,6 +9,7 @@ import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -65,7 +66,7 @@ public class Reservations extends BaseEntity {
     @JsonBackReference
     private User user;
 
-    @OneToOne(mappedBy = "reservations", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "reservations", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Review review;
+    private List<Review> reviews = new ArrayList<>();
 }
