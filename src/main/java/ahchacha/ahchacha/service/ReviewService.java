@@ -41,8 +41,10 @@ public class ReviewService {
         Review review = Review.builder()
                 .reviewComment(reviewDto.getReviewComment())
                 .reviewScore(reviewDto.getReviewScore())
+                .personType(PersonType.TORENTER)
 
-                .user(reservation.getUser())
+                .user(user)
+                .renterUserId(reservation.getUser().getId())
                 .renterNickName(reservation.getUserNickname())
                 .renterProfile(reservation.getUserDefaultProfile())
 
@@ -53,6 +55,31 @@ public class ReviewService {
         return ReviewDto.ReviewResponseDto.toDto(createdReview);
     }
 
+
+    @Transactional //내가 반납완료한 아이템의 주인에게 리뷰
+    public ReviewDto.ReviewRentedResponseDto createUserReview(ReviewDto.ReviewRequestDto reviewDto, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Reservations reservation = reservationRepository.findById(reviewDto.getReservationId())
+                .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+
+        Long itemOwnerId = reservation.getItem().getUser().getId();
+
+        Review review = Review.builder()
+                .reviewComment(reviewDto.getReviewComment())
+                .reviewScore(reviewDto.getReviewScore())
+                .personType(PersonType.TOOWNER)
+
+                .user(user)
+                .itemOwnerId(reservation.getItemUserId())
+                .ownerNickName(reservation.getItemUserNickName())
+                .ownerProfile(reservation.getItemRegisterDefaultProfile())
+
+                .reservations(reservation)
+                .build();
+
+        Review createdReview = reviewRepository.save(review);
+        return ReviewDto.ReviewRentedResponseDto.toDto(createdReview);
+    }
 
 //    public Page<ReviewDto.ReviewResponseDto> getAllReviewsRENTER(int page) {
 //        List<Sort.Order> sorts = new ArrayList<>();
