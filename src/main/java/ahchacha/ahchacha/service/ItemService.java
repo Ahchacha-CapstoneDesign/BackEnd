@@ -87,6 +87,49 @@ public class ItemService {
     }
 
     @Transactional
+    public ItemDto.ItemResponseDto updateItem(Long itemId, ItemDto.ItemRequestDto itemDto, List<MultipartFile> files, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        // 아이템 ID로 아이템 조회
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new IllegalArgumentException("Invalid item Id: " + itemId));
+
+        if (!item.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update this item.");
+        }
+
+        List<String> pictureUrls = new ArrayList<>();
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder()
+                        .uuid(uuid).build());
+                String pictureUrl = s3Manager.uploadFile(s3Manager.generateItemKeyName(savedUuid), file);
+                pictureUrls.add(pictureUrl);
+
+                System.out.println("s3 url(클릭 시 브라우저에 사진 뜨는지 확인): " + pictureUrl);
+            }
+        }
+
+        item.setTitle(itemDto.getTitle());
+        item.setPricePerHour(itemDto.getPricePerHour());
+        item.setCanBorrowDateTime(itemDto.getCanBorrowDateTime());
+        item.setReturnDateTime(itemDto.getReturnDateTime());
+        item.setBorrowPlace(itemDto.getBorrowPlace());
+        item.setReturnPlace(itemDto.getReturnPlace());
+        item.setIntroduction(itemDto.getIntroduction());
+        item.setItemStatus(itemDto.getItemStatus());
+        item.setCategory(itemDto.getCategory());
+        item.setPersonOrOfficial(user.getPersonOrOfficial());
+        if (!pictureUrls.isEmpty()) {
+            item.getImageUrls().addAll(pictureUrls);
+        }
+
+        Item updatedItem = itemRepository.save(item);
+        return ItemDto.ItemResponseDto.toDto(updatedItem);
+    }
+
+    @Transactional
     public Page<ItemDto.ItemResponseDto> getAllMyRegisteredItems(int page, User user) { //내가 등록한 아이템들 보여주기
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순

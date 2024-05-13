@@ -87,6 +87,61 @@ public class ItemController {
         return new ResponseEntity<>(itemResponseDto, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "아이템 수정", description = "canBorrowDateTime/returnDateTime 예시 : 2024-03-17T10:26:08")
+    @PostMapping(value = "/{itemId}/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ItemDto.ItemResponseDto> updateItem(
+            @PathVariable Long itemId,
+            @RequestPart(value = "file", required = false) List<MultipartFile> files,
+            @RequestParam(name = "title") String title,
+            @RequestParam(name = "pricePerHour") int pricePerHour,
+            @RequestParam(name = "canBorrowDateTime") LocalDateTime canBorrowDateTime,
+            @RequestParam(name = "returnDateTime") LocalDateTime returnDateTime,
+            @RequestParam(name = "borrowPlace") String borrowPlace,
+            @RequestParam(name = "returnPlace") String returnPlace,
+            @RequestParam(name = "introduction") String introduction,
+            @RequestParam(name = "itemStatus") String itemStatusString,
+            @RequestParam(name = "category") Category category,
+            HttpSession session) {
+
+        ItemStatus itemStatus;
+        switch (itemStatusString) {
+            case "NEW":
+                itemStatus = ItemStatus.NEW;
+                break;
+            case "LITTLEUSE":
+                itemStatus = ItemStatus.LITTLEUSE;
+                break;
+            case "LESSUSE":
+                itemStatus = ItemStatus.LESSUSE;
+                break;
+            case "MOREUSE":
+                itemStatus = ItemStatus.MOREUSE;
+                break;
+            case "BREAK":
+                itemStatus = ItemStatus.BREAK;
+                break;
+            default:
+                itemStatus = ItemStatus.NEW;
+                break;
+        }
+
+        ItemDto.ItemRequestDto itemRequestDto = ItemDto.ItemRequestDto.builder()
+                .title(title)
+                .pricePerHour(pricePerHour)
+                .canBorrowDateTime(canBorrowDateTime)
+                .returnDateTime(returnDateTime)
+                .borrowPlace(borrowPlace)
+                .returnPlace(returnPlace)
+                .introduction(introduction)
+                .itemStatus(itemStatus)
+                .category(category)
+                .build();
+
+        ItemDto.ItemResponseDto itemResponseDto = itemService.updateItem(itemId, itemRequestDto, files, session);
+        return new ResponseEntity<>(itemResponseDto, HttpStatus.OK);
+    }
+
+
     @Operation(summary = "내가 등록한 item들 조회")
     @GetMapping("/myItems")
     public ResponseEntity<Page<ItemDto.ItemResponseDto>> getMyItems(HttpServletRequest request,
