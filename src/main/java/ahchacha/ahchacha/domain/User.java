@@ -40,7 +40,9 @@ public class User {
 
     private String status;
 
-    private BigDecimal averageReviewScore;
+    private BigDecimal ownerReviewScore;
+
+    private BigDecimal renterReviewScore;
 
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial; //공공 로그인 or 개인 로그인
@@ -67,8 +69,4 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Community> communities = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    @JsonManagedReference
-//    private List<Comment> comments = new ArrayList<>();
 }
