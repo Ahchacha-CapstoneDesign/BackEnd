@@ -33,7 +33,7 @@ public class ReviewService {
     private final ReservationRepository reservationRepository;
 
     @Transactional //내가 등록한 물품을 예약했던 user에 대해 리뷰
-    public ReviewDto.ReviewResponseDto createMyItemReview(ReviewDto.ReviewRequestDto reviewDto, HttpSession session) {
+    public ReviewDto.ReviewResponseDto createRenterReview(ReviewDto.ReviewRequestDto reviewDto, HttpSession session) {
         User user = (User) session.getAttribute("user");
         Reservations reservation = reservationRepository.findById(reviewDto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
@@ -44,6 +44,11 @@ public class ReviewService {
                 .personType(PersonType.TORENTER)
 
                 .user(user)
+
+                .itemOwnerId(reservation.getItemUserId())
+                .ownerNickName(reservation.getItemUserNickName())
+                .ownerProfile(reservation.getItemRegisterDefaultProfile())
+
                 .renterUserId(reservation.getUser().getId())
                 .renterNickName(reservation.getUserNickname())
                 .renterProfile(reservation.getUserDefaultProfile())
@@ -57,12 +62,10 @@ public class ReviewService {
 
 
     @Transactional //내가 반납완료한 아이템의 주인에게 리뷰
-    public ReviewDto.ReviewRentedResponseDto createUserReview(ReviewDto.ReviewRequestDto reviewDto, HttpSession session) {
+    public ReviewDto.ReviewResponseDto createOwnerReview(ReviewDto.ReviewRequestDto reviewDto, HttpSession session) {
         User user = (User) session.getAttribute("user");
         Reservations reservation = reservationRepository.findById(reviewDto.getReservationId())
                 .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
-
-        Long itemOwnerId = reservation.getItem().getUser().getId();
 
         Review review = Review.builder()
                 .reviewComment(reviewDto.getReviewComment())
@@ -70,88 +73,96 @@ public class ReviewService {
                 .personType(PersonType.TOOWNER)
 
                 .user(user)
+
                 .itemOwnerId(reservation.getItemUserId())
                 .ownerNickName(reservation.getItemUserNickName())
                 .ownerProfile(reservation.getItemRegisterDefaultProfile())
+
+                .renterUserId(reservation.getUser().getId())
+                .renterNickName(reservation.getUserNickname())
+                .renterProfile(reservation.getUserDefaultProfile())
 
                 .reservations(reservation)
                 .build();
 
         Review createdReview = reviewRepository.save(review);
-        return ReviewDto.ReviewRentedResponseDto.toDto(createdReview);
+
+        // 리뷰가 작성될 때마다 해당 사용자의 리뷰 점수 업데이트
+        updateAverageReviewScore(reservation.getItemUserId());
+
+        return ReviewDto.ReviewResponseDto.toDto(createdReview);
+    }
+//    나 로그인 :
+//    남이 나에게 리뷰한 내역(내가 등록한 물품)
+//    현재 세션 로그인 사용자 = item_owner_id가 같은 리뷰 페이징 / personType = TOOWNER
+    @Transactional
+    public Page<ReviewDto.ReviewResponseDto> getOtherCreateReviewToMeInMyRegisterItem(HttpSession session, int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+
+        Long currentUserId = ((User) session.getAttribute("user")).getId();
+        Page<Review> reviews = reviewRepository.findAllByItemOwnerIdAndPersonType(currentUserId, PersonType.TOOWNER, pageable);
+        return ReviewDto.toDtoPage(reviews);
     }
 
-//    public Page<ReviewDto.ReviewResponseDto> getAllReviewsRENTER(int page) {
-//        List<Sort.Order> sorts = new ArrayList<>();
-//        sorts.add(Sort.Order.desc("createdAt"));
-//
-//        Pageable pageable = PageRequest.of(page - 1, 3, Sort.by(sorts));
-//        Page<Review> reviewPage = reviewRepository.findByPersonType(PersonType.RENTER, pageable);
-//
-//        return ReviewDto.toDtoPage(reviewPage);
-//    }
-//
-//    public Page<ReviewDto.ReviewResponseDto> getAllReviewsRECEIVER(int page) {
-//        List<Sort.Order> sorts = new ArrayList<>();
-//        sorts.add(Sort.Order.desc("createdAt"));
-//
-//        Pageable pageable = PageRequest.of(page - 1, 3, Sort.by(sorts));
-//        Page<Review> reviewPage = reviewRepository.findByPersonType(PersonType.RECEIVER, pageable);
-//
-//        return ReviewDto.toDtoPage(reviewPage);
-//    }
-//
-//    public ReviewDto.ReviewResponseDto getReviewByItemId(Long itemId) {
-//        Review review = reviewRepository.findByItemId(itemId).orElseThrow(() -> new EntityNotFoundException("Review not found for item: " + itemId));
-//        return ReviewDto.ReviewResponseDto.toDto(review);
-//    }
-//
-//    public Page<ReviewDto.ReviewResponseDto> getReviewsByUserIdAndPersonTypeRENTERShortView(Long userId, int page) {
-//        List<Sort.Order> sorts = new ArrayList<>();
-//        sorts.add(Sort.Order.desc("reviewScore"));
-//
-//        Pageable pageable = PageRequest.of(page-1, 2, Sort.by(sorts));
-//        Page<Review> reviewPage = reviewRepository.findByUserIdAndPersonType(userId, PersonType.RENTER, pageable);
-//        return ReviewDto.toDtoPage(reviewPage);
-//    }
-//
-//    public Page<ReviewDto.ReviewResponseDto> getReviewsByUserIdAndPersonTypeRENTER(Long userId, int page) {
-//        List<Sort.Order> sorts = new ArrayList<>();
-//        sorts.add(Sort.Order.desc("reviewScore"));
-//        sorts.add(Sort.Order.desc("createdAt"));
-//
-//        Pageable pageable = PageRequest.of(page-1, 3, Sort.by(sorts));
-//        Page<Review> reviewPage = reviewRepository.findByUserIdAndPersonType(userId, PersonType.RENTER, pageable);
-//        return ReviewDto.toDtoPage(reviewPage);
-//    }
-//
-//    public Page<ReviewDto.ReviewResponseDto> getReviewsByUserIdAndPersonTypeRECEIVER(Long userId, int page) {
-//        List<Sort.Order> sorts = new ArrayList<>();
-//        sorts.add(Sort.Order.desc("reviewScore"));
-//        sorts.add(Sort.Order.desc("createdAt"));
-//
-//        Pageable pageable = PageRequest.of(page-1, 3, Sort.by(sorts));
-//        Page<Review> reviewPage = reviewRepository.findByUserIdAndPersonType(userId, PersonType.RECEIVER, pageable);
-//        return ReviewDto.toDtoPage(reviewPage);
-//    }
-//
-//    public BigDecimal getAverageScoreByUserIdAndPersonType(Long userId, PersonType personType) {
-//        return reviewRepository.findAverageScoreByUserIdAndPersonType(userId, personType);
-//    }
-//
-//    public BigDecimal getOverallAverageScoreByUserId(Long userId) {
-//        return reviewRepository.findAverageScoreByUserId(userId);
-//    }
-//
-//    @Transactional
-//    public void deleteReview(Long reviewId, User currentUser) {
-//        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-//                new IllegalArgumentException("Invalid review Id:" + reviewId));
-//
-//        if (!review.getUser().getId().equals(currentUser.getId())) {
-//            throw new IllegalArgumentException("You do not have permission to delete this review.");
-//        }
-//
-//        reviewRepository.delete(review);
-//    }
+//    나 로그인 :
+//    남이 나에게 리뷰한 내역(내가 빌린 물품)
+//    현재 세션 로그인 사용자 = renter_user_id / personType = TORENTER
+    @Transactional
+    public Page<ReviewDto.ReviewResponseDto> getOtherCreateReviewToMeInMyRentedItem(HttpSession session, int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+
+        Long currentUserId = ((User) session.getAttribute("user")).getId();
+        Page<Review> reviews = reviewRepository.findAllByRenterUserIdAndPersonType(currentUserId, PersonType.TORENTER, pageable);
+        return ReviewDto.toDtoPage(reviews);
+    }
+
+//    나 로그인 :
+//    내가 남에게 리뷰한 내역(내가 빌린 물품의 주인에게)
+//    현재 세션 로그인 사용자 = user_id  / personType = TOOWNER
+    @Transactional
+    public Page<ReviewDto.ReviewResponseDto> getCreatedReviewToOwnerByMe(HttpSession session, int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+
+        Long currentUserId = ((User) session.getAttribute("user")).getId();
+        Page<Review> reviews = reviewRepository.findAllByUserIdAndPersonType(currentUserId, PersonType.TOOWNER, pageable);
+        return ReviewDto.toDtoPage(reviews);
+    }
+
+//    나 로그인 :
+//    내가 남에게 리뷰한 내역(내가 등록한 물품의 대여자에게)
+//    현재 세션 로그인 사용자 = user_id  / personType = TORENTER
+    @Transactional
+    public Page<ReviewDto.ReviewResponseDto> getCreatedReviewToRenterByMe(HttpSession session, int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+
+        Long currentUserId = ((User) session.getAttribute("user")).getId();
+        Page<Review> reviews = reviewRepository.findAllByUserIdAndPersonType(currentUserId, PersonType.TORENTER, pageable);
+        return ReviewDto.toDtoPage(reviews);
+    }
+
+    private void updateAverageReviewScore(Long itemOwnerId) {
+        // 아이템 주인의 모든 리뷰 점수를 가져와서 평균 계산
+        List<Review> itemOwnerReviews = reviewRepository.findByItemOwnerId(itemOwnerId);
+        double totalScore = 0;
+        for (Review review : itemOwnerReviews) {
+            totalScore += review.getReviewScore().doubleValue();
+        }
+        double averageScore = totalScore / itemOwnerReviews.size();
+
+        // 계산된 평균 리뷰 점수를 아이템 주인 엔티티에 설정
+        User itemOwner = userRepository.findById(itemOwnerId)
+                .orElseThrow(() -> new IllegalArgumentException("Item owner not found"));
+        itemOwner.setAverageReviewScore(BigDecimal.valueOf(averageScore));
+
+        // 엔티티 업데이트
+        userRepository.save(itemOwner);
+    }
 }

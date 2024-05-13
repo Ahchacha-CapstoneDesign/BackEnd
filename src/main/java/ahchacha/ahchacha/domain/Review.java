@@ -41,14 +41,15 @@ public class Review extends BaseEntity {
     private String ownerNickName; //내가 예약해서 반납한 아이템 주인의 닉네임
     private String ownerProfile; //내가 예약해서 반납한 아이템 주인의 프로필
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reservation_id")
     @JsonBackReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Reservations reservations;
 }

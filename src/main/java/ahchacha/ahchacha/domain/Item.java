@@ -86,7 +86,7 @@ public class Item extends BaseEntity {
     @JsonManagedReference
     private List<Reservations> reservations = new ArrayList<>();
 
-//    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 //    @JsonManagedReference
-//    private Review review;
+//    private List<Review> review = new ArrayList<>();
 }
