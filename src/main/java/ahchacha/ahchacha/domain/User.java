@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +39,8 @@ public class User {
     private String grade;
 
     private String status;
+
+    private BigDecimal averageReviewScore;
 
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial; //공공 로그인 or 개인 로그인
