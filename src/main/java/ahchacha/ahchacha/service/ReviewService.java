@@ -186,4 +186,10 @@ public class ReviewService {
         // 엔티티 업데이트
         userRepository.save(renter);
     }
+
+    public Optional<ReviewDto.ReviewResponseDto> getReviewById(Long reviewId) {
+        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+
+        return optionalReview.map(ReviewDto.ReviewResponseDto::toDto);
+    }
 }
