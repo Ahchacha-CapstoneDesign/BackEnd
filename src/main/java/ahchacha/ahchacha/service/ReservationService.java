@@ -75,6 +75,50 @@ public class ReservationService {
     }
 
 
+    ///////////////////////////////////////////////////////////////////////////////
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyAllItemsRentedByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.findByItemUserId(currentUser.getId(), pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyItemsReservedByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.
+                findByItemUserIdAndRentingStatus(currentUser.getId(), RentingStatus.RESERVED, pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyItemsRentingByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.
+                findByItemUserIdAndRentingStatus(currentUser.getId(), RentingStatus.RENTING, pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyItemsReturnedByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.
+                findByItemUserIdAndRentingStatus(currentUser.getId(), RentingStatus.RETURNED, pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
     //개인이 올린 item 예약
     public void createPersonReservation(ReservationDto.ReservationRequestDto reservationDTO, HttpSession session) {
         User user = (User) session.getAttribute("user");
