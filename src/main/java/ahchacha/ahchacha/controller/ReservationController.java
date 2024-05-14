@@ -82,6 +82,72 @@ public class ReservationController {
         return ResponseEntity.ok(myItems);
     }
 
+    @Operation(summary = "내가 등록한 모든 item들의 예약 조회(마이페이지-등록내역)")
+    @GetMapping("/myAllItemsRentedByOther")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getMyAllItemsRentedByOther(HttpServletRequest request,
+                                                                                               @RequestParam(value = "page", defaultValue = "1") int page) {
+            HttpSession session = request.getSession();
+            User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getMyAllItemsRentedByOther(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "내가 등록한 item들의 예약완료 조회(마이페이지-등록내역)")
+    @GetMapping("/myItemsReservedByOther")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getMyItemsReservedByOther(HttpServletRequest request,
+                                                                                               @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getMyItemsReservedByOther(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "내가 등록한 item들의 대여중 조회(마이페이지-등록내역)")
+    @GetMapping("/myItemsRentingByOther")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getMyItemsRentingByOther(HttpServletRequest request,
+                                                                                                 @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getMyItemsRentingByOther(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "내가 등록한 item들의 반납완료 조회(마이페이지-등록내역)")
+    @GetMapping("/myItemsReturnedByOther")
+    public ResponseEntity<Page<ReservationDto.ReservationResponseDto>> getMyItemsReturnedByOther(HttpServletRequest request,
+                                                                                                @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ReservationDto.ReservationResponseDto> myItems = reservationService.getMyItemsReturnedByOther(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Operation(summary = "예약 삭제 by 아이템 빌린 사람", description = "reservation의 id를 입력하세요")
     @DeleteMapping("/renter/{reservationId}")
     public ResponseEntity<?> deleteReservationAndResetRentingStatusByRenter(@PathVariable Long reservationId, HttpServletRequest request) {

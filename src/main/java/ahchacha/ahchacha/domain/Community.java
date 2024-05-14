@@ -54,11 +54,11 @@ public class Community extends BaseEntity {
     @ColumnDefault("0")
     private int replyCount;
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Heart> hearts = new ArrayList<>();
 
