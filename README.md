@@ -186,36 +186,36 @@
 ### 조성빈(팀장)
 
 - **Frontend**
-    - 
-    - 
+    - React 클라이언트 구축
 - **Design**
+    - 페이지 UI/UX 디자인 
 
 <br>
     
 ### 권승진
 
 - **Backend**
-    - 
-    - 
+    - DB 설계 및 구축
+    - 서버 구축
 - **Frontend**
-    - 
+    - React 클라이언트 구축
 
 <br>
 
 ### 김동욱
 
 - **Backend**
-    - 
-    - 
+    - DB 설계 및 구축
+    - 서버 구축
 - **Frontend**
-    - 
+    - React 클라이언트 구축
 <br>
 
 ### 유호준
 
 - **Backend**
-    - 
-    - 
+    - DB 설계 및 구축
+    - 서버 구축
 
 <br>
 
