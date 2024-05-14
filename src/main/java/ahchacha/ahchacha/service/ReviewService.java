@@ -192,4 +192,28 @@ public class ReviewService {
 
         return optionalReview.map(ReviewDto.ReviewResponseDto::toDto);
     }
+
+    public List<ReviewDto.ReviewResponseDto> getLatestAndHighestScoreReviews(HttpSession session) {
+        List<ReviewDto.ReviewResponseDto> reviews = new ArrayList<>();
+
+        Long currentUserId = ((User) session.getAttribute("user")).getId();
+
+        // 내가 등록한 물품의 리뷰 중 가장 최신 및 reviewScore가 가장 높은 리뷰 가져오기
+        Pageable pageable1 = PageRequest.of(0, 1, Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("reviewScore")));
+        Page<Review> reviews1 = reviewRepository.findAllByItemOwnerIdAndPersonType(currentUserId, PersonType.TOOWNER, pageable1);
+        reviews1.getContent().stream()
+                .findFirst()
+                .map(ReviewDto.ReviewResponseDto::toDto)
+                .ifPresent(reviews::add);
+
+        // 내가 빌린 물품의 리뷰 중 가장 최신 및 reviewScore가 가장 높은 리뷰 가져오기
+        Pageable pageable2 = PageRequest.of(0, 1, Sort.by(Sort.Order.desc("createdAt"), Sort.Order.desc("reviewScore")));
+        Page<Review> reviews2 = reviewRepository.findAllByRenterUserIdAndPersonType(currentUserId, PersonType.TORENTER, pageable2);
+        reviews2.getContent().stream()
+                .findFirst()
+                .map(ReviewDto.ReviewResponseDto::toDto)
+                .ifPresent(reviews::add);
+
+        return reviews;
+    }
 }

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -84,6 +85,12 @@ public class ReviewController {
 
         return optionalReviewResponseDto.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/getLatestAndHighestScoreReviews")
+    public ResponseEntity<List<ReviewDto.ReviewResponseDto>> getLatestAndHighestScoreReviews(HttpSession session) {
+        List<ReviewDto.ReviewResponseDto> reviews = reviewService.getLatestAndHighestScoreReviews(session);
+        return ResponseEntity.ok(reviews);
     }
 }
 
