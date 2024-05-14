@@ -178,38 +178,6 @@ public class ItemService {
         return ItemDto.toDtoPage(itemPage);
     }
 
-    @Transactional
-    public void updateReservedToRentingStatusForItem(Item item) { //예약완료 -> 대여중 (등록한 사람이 하는 것)
-        if (item.getReservation() == Reservation.NO && item.getRentingStatus() == RentingStatus.RESERVED) {
-            item.setRentingStatus(RentingStatus.RENTING);
-            itemRepository.save(item);
-
-            List<Reservations> reservations = item.getReservations();
-            if (reservations != null) {
-                for (Reservations reservation : reservations) {
-                    reservation.setRentingStatus(RentingStatus.RENTING);
-                    reservationRepository.save(reservation);
-                }
-            }
-        }
-    }
-
-    @Transactional
-    public void updateRentingToReturnedStatusForItem(Item item) { //대여중 -> 반납완료 (등록한 사람이 하는 것)
-        if (item.getReservation() == Reservation.NO && item.getRentingStatus() == RentingStatus.RENTING) {
-            item.setRentingStatus(RentingStatus.RETURNED);
-            itemRepository.save(item);
-
-            List<Reservations> reservations = item.getReservations();
-            if (reservations != null) {
-                for (Reservations reservation : reservations) {
-                    reservation.setRentingStatus(RentingStatus.RETURNED);
-                    reservationRepository.save(reservation);
-                }
-            }
-        }
-    }
-
     public Page<ItemDto.ItemResponseDto> getAllItems(int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt")); //최근 작성순

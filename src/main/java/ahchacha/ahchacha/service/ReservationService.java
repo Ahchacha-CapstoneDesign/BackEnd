@@ -10,6 +10,7 @@ import ahchacha.ahchacha.dto.ReservationDto;
 import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.repository.ReservationRepository;
 import ahchacha.ahchacha.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -71,6 +72,81 @@ public class ReservationService {
         Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
         Page<Reservations> itemPage = reservationRepository.findByUserAndRentingStatus(user, RentingStatus.RETURNED, pageable);
         return ReservationDto.toDtoPage(itemPage);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyAllItemsRentedByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.findByItemUserId(currentUser.getId(), pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyItemsReservedByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.
+                findByItemUserIdAndRentingStatus(currentUser.getId(), RentingStatus.RESERVED, pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyItemsRentingByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.
+                findByItemUserIdAndRentingStatus(currentUser.getId(), RentingStatus.RENTING, pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ReservationDto.ReservationResponseDto> getMyItemsReturnedByOther(int page, User currentUser) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Reservations> itemPage = reservationRepository.
+                findByItemUserIdAndRentingStatus(currentUser.getId(), RentingStatus.RETURNED, pageable);
+        return ReservationDto.toDtoPage(itemPage);
+    }
+
+    //예약완료 -> 대여중 (등록한 사람이 하는 것)
+    @Transactional
+    public void updateReservedToRentingStatusForReservation(Reservations reservations) {
+        if (reservations.getRentingStatus() == RentingStatus.RESERVED) {
+            reservations.setRentingStatus(RentingStatus.RENTING);
+            reservationRepository.save(reservations);
+
+            Item item = reservations.getItem();
+            if (item != null) {
+                    item.setRentingStatus(RentingStatus.RENTING);
+                    itemRepository.save(item);
+                }
+            }
+    }
+
+    //대여중 -> 반납완료 (등록한 사람이 하는 것)
+    @Transactional
+    public void updateRentingToReturnedStatusForReservation(Reservations reservations) {
+        if (reservations.getRentingStatus() == RentingStatus.RENTING) {
+            reservations.setRentingStatus(RentingStatus.RETURNED);
+            reservationRepository.save(reservations);
+
+            Item item = reservations.getItem();
+            if (item != null) {
+                item.setRentingStatus(RentingStatus.RETURNED);
+                itemRepository.save(item);
+            }
+        }
     }
 
 
@@ -159,5 +235,37 @@ public class ReservationService {
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
+    }
+
+    @Transactional
+    public void deleteReservationAndResetRentingStatusByRenter(Long reservationId, User currentUser) {
+        Reservations reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with id: " + reservationId));
+
+        if (!reservation.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to delete this reservation.");
+        }
+
+        Item item = reservation.getItem();
+        item.setRentingStatus(RentingStatus.NONE);
+        item.setReservation(Reservation.YES);
+
+        reservationRepository.delete(reservation);
+    }
+
+    @Transactional
+    public void deleteReservationAndResetRentingStatusByOwner(Long reservationId, User currentUser) {
+        Reservations reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with id: " + reservationId));
+
+        if (!reservation.getItemUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to delete this reservation.");
+        }
+
+        Item item = reservation.getItem();
+        item.setRentingStatus(RentingStatus.NONE);
+        item.setReservation(Reservation.YES);
+
+        reservationRepository.delete(reservation);
     }
 }

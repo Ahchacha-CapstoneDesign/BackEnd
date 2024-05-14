@@ -57,6 +57,9 @@ public class ReviewService {
                 .build();
 
         Review createdReview = reviewRepository.save(review);
+
+        updateAverageReviewScoreForRenter(reservation.getUser().getId());
+
         return ReviewDto.ReviewResponseDto.toDto(createdReview);
     }
 
@@ -160,9 +163,33 @@ public class ReviewService {
         // 계산된 평균 리뷰 점수를 아이템 주인 엔티티에 설정
         User itemOwner = userRepository.findById(itemOwnerId)
                 .orElseThrow(() -> new IllegalArgumentException("Item owner not found"));
-        itemOwner.setAverageReviewScore(BigDecimal.valueOf(averageScore));
+        itemOwner.setOwnerReviewScore(BigDecimal.valueOf(averageScore));
 
         // 엔티티 업데이트
         userRepository.save(itemOwner);
+    }
+
+    private void updateAverageReviewScoreForRenter(Long renterUserId) {
+        // 물품을 예약한 사용자의 모든 리뷰 점수를 가져와서 평균 계산
+        List<Review> renterReviews = reviewRepository.findByRenterUserId(renterUserId);
+        double totalScore = 0;
+        for (Review review : renterReviews) {
+            totalScore += review.getReviewScore().doubleValue();
+        }
+        double averageScore = totalScore / renterReviews.size();
+
+        // 계산된 평균 리뷰 점수를 사용자 엔티티에 설정
+        User renter = userRepository.findById(renterUserId)
+                .orElseThrow(() -> new IllegalArgumentException("Renter not found"));
+        renter.setRenterReviewScore(BigDecimal.valueOf(averageScore));
+
+        // 엔티티 업데이트
+        userRepository.save(renter);
+    }
+
+    public Optional<ReviewDto.ReviewResponseDto> getReviewById(Long reviewId) {
+        Optional<Review> optionalReview = reviewRepository.findById(reviewId);
+
+        return optionalReview.map(ReviewDto.ReviewResponseDto::toDto);
     }
 }
