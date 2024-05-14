@@ -119,6 +119,37 @@ public class ReservationService {
         return ReservationDto.toDtoPage(itemPage);
     }
 
+    //예약완료 -> 대여중 (등록한 사람이 하는 것)
+    @Transactional
+    public void updateReservedToRentingStatusForReservation(Reservations reservations) {
+        if (reservations.getRentingStatus() == RentingStatus.RESERVED) {
+            reservations.setRentingStatus(RentingStatus.RENTING);
+            reservationRepository.save(reservations);
+
+            Item item = reservations.getItem();
+            if (item != null) {
+                    item.setRentingStatus(RentingStatus.RENTING);
+                    itemRepository.save(item);
+                }
+            }
+    }
+
+    //대여중 -> 반납완료 (등록한 사람이 하는 것)
+    @Transactional
+    public void updateRentingToReturnedStatusForReservation(Reservations reservations) {
+        if (reservations.getRentingStatus() == RentingStatus.RENTING) {
+            reservations.setRentingStatus(RentingStatus.RETURNED);
+            reservationRepository.save(reservations);
+
+            Item item = reservations.getItem();
+            if (item != null) {
+                item.setRentingStatus(RentingStatus.RETURNED);
+                itemRepository.save(item);
+            }
+        }
+    }
+
+
     //개인이 올린 item 예약
     public void createPersonReservation(ReservationDto.ReservationRequestDto reservationDTO, HttpSession session) {
         User user = (User) session.getAttribute("user");

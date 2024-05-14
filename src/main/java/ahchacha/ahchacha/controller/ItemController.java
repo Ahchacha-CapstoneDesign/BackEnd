@@ -198,49 +198,6 @@ public class ItemController {
         return ResponseEntity.ok(itemsDtoPage);
     }
 
-    @Operation(summary = "예약완료 아이템 대여중으로 변경", description = "대여처리 시 rentingStatus: RESERVED -> RENTING")
-    @PatchMapping("/{itemId}/updateReservedToRenting")
-    public ResponseEntity<String> updateReservedToRentingStatusForItem(@PathVariable Long itemId, HttpSession session) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid item Id: " + itemId));
-
-        User currentUser = (User) session.getAttribute("user");
-
-        if (currentUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated.");
-        }
-
-        if (!item.getUser().getId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You do not have permission to update the renting status of this item.");
-        }
-
-        // updateRentingStatusForItem 메서드를 호출하여 아이템의 대여 상태를 업데이트합니다.
-        itemService.updateReservedToRentingStatusForItem(item);
-
-        return ResponseEntity.ok("Renting status updated successfully.");
-    }
-
-    @Operation(summary = "대여중 아이템 반납완료로 변경", description = "반납처리 시 RENTINGSTATUS: RENTING -> RETURNED")
-    @PatchMapping("/{itemId}/updateRentingToReturned")
-    public ResponseEntity<String> updateRentingToReturnedStatusForItem(@PathVariable Long itemId, HttpSession session) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid item Id: " + itemId));
-
-        User currentUser = (User) session.getAttribute("user");
-
-        if (currentUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated.");
-        }
-
-        if (!item.getUser().getId().equals(currentUser.getId())) {
-            throw new IllegalArgumentException("You do not have permission to update the renting status of this item.");
-        }
-
-        // updateRentingStatusForItem 메서드를 호출하여 아이템의 대여 상태를 업데이트합니다.
-        itemService.updateRentingToReturnedStatusForItem(item);
-
-        return ResponseEntity.ok("Renting status updated successfully.");
-    }
 
     @Operation(summary = "아이템 상세 조회", description = "{itemId} 자리에 상세 조회할 아이템 id를 전달해주세요.")
     @GetMapping("/{itemId}")
