@@ -121,9 +121,8 @@ public class ItemService {
         item.setItemStatus(itemDto.getItemStatus());
         item.setCategory(itemDto.getCategory());
         item.setPersonOrOfficial(user.getPersonOrOfficial());
-        if (!pictureUrls.isEmpty()) {
-            item.getImageUrls().addAll(pictureUrls);
-        }
+        item.setImageUrls(pictureUrls);
+
 
         Item updatedItem = itemRepository.save(item);
         return ItemDto.ItemResponseDto.toDto(updatedItem);
