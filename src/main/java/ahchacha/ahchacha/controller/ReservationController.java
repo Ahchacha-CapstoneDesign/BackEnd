@@ -81,4 +81,20 @@ public class ReservationController {
 
         return ResponseEntity.ok(myItems);
     }
+
+    @Operation(summary = "예약 삭제 by 아이템 빌린 사람", description = "reservation의 id를 입력하세요")
+    @DeleteMapping("/renter/{reservationId}")
+    public ResponseEntity<?> deleteReservationAndResetRentingStatusByRenter(@PathVariable Long reservationId, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        reservationService.deleteReservationAndResetRentingStatusByRenter(reservationId, user);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "예약 삭제 by 아이템 주인", description = "reservation의 id를 입력하세요")
+    @DeleteMapping("/owner/{reservationId}")
+    public ResponseEntity<?> deleteReservationAndResetRentingStatusByOwner(@PathVariable Long reservationId, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
+        reservationService.deleteReservationAndResetRentingStatusByOwner(reservationId, user);
+        return ResponseEntity.ok().build();
+    }
 }

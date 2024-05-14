@@ -10,6 +10,7 @@ import ahchacha.ahchacha.dto.ReservationDto;
 import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.repository.ReservationRepository;
 import ahchacha.ahchacha.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -159,5 +160,37 @@ public class ReservationService {
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
+    }
+
+    @Transactional
+    public void deleteReservationAndResetRentingStatusByRenter(Long reservationId, User currentUser) {
+        Reservations reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with id: " + reservationId));
+
+        if (!reservation.getUser().getId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to delete this reservation.");
+        }
+
+        Item item = reservation.getItem();
+        item.setRentingStatus(RentingStatus.NONE);
+        item.setReservation(Reservation.YES);
+
+        reservationRepository.delete(reservation);
+    }
+
+    @Transactional
+    public void deleteReservationAndResetRentingStatusByOwner(Long reservationId, User currentUser) {
+        Reservations reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation not found with id: " + reservationId));
+
+        if (!reservation.getItemUserId().equals(currentUser.getId())) {
+            throw new IllegalArgumentException("You do not have permission to delete this reservation.");
+        }
+
+        Item item = reservation.getItem();
+        item.setRentingStatus(RentingStatus.NONE);
+        item.setReservation(Reservation.YES);
+
+        reservationRepository.delete(reservation);
     }
 }
