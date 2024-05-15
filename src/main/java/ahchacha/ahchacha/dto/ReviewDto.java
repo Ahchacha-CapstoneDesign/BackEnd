@@ -17,33 +17,48 @@ public class ReviewDto {
     @Setter
     @Builder
     public static class ReviewRequestDto {
-        private Long itemId;
+        private Long reservationId;
         private String reviewComment;
         private BigDecimal reviewScore;
-        private PersonType personType;
     }
 
     @Getter
     @Setter
     @Builder
     public static class ReviewResponseDto {
-        private String nickname;
         private Long reviewId;
-        private Long itemId;
         private String reviewComment;
         private BigDecimal reviewScore;
+
+        private Long itemOwnerId;
+        private String ownerNickName;
+        private String ownerProfile;
+
+        private Long renterUserId;
+        private String renterNickName;
+        private String renterProfile;
+
         private PersonType personType;
+
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
         public static ReviewResponseDto toDto(Review review) {
             return ReviewResponseDto.builder()
-                    .nickname(review.getUser().getNickname())
                     .reviewId(review.getId())
-                    .itemId(review.getItem().getId())
                     .reviewComment(review.getReviewComment())
                     .reviewScore(review.getReviewScore())
+
+                    .itemOwnerId(review.getItemOwnerId())
+                    .ownerNickName(review.getOwnerNickName())
+                    .ownerProfile(review.getOwnerProfile())
+
+                    .renterUserId(review.getRenterUserId())
+                    .renterNickName(review.getRenterNickName())
+                    .renterProfile(review.getRenterProfile())
+
                     .personType(review.getPersonType())
+
                     .createdAt(review.getCreatedAt())
                     .updatedAt(review.getUpdatedAt())
                     .build();

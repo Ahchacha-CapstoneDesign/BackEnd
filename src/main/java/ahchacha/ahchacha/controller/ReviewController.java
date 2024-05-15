@@ -3,106 +3,94 @@ package ahchacha.ahchacha.controller;
 import ahchacha.ahchacha.domain.Review;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
+import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.dto.ReviewDto;
 import ahchacha.ahchacha.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/review")
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @Autowired
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
+    @Operation(summary = "내가 등록한 물품을 예약했던 user에 대해 리뷰")
+    @PostMapping("/toRenter")
+    public ResponseEntity<ReviewDto.ReviewResponseDto> createRenterReview(@RequestBody ReviewDto.ReviewRequestDto reviewRequestDto, HttpSession session) {
 
-    @Operation(summary = "리뷰 등록하기")
-    @PostMapping()
-    public ResponseEntity<ReviewDto.ReviewResponseDto> createReview(@RequestBody ReviewDto.ReviewRequestDto reviewRequestDto, HttpSession session) {
-
-        ReviewDto.ReviewResponseDto reviewResponseDto = reviewService.createReview(reviewRequestDto, session);
+        ReviewDto.ReviewResponseDto reviewResponseDto = reviewService.createRenterReview(reviewRequestDto, session);
         return new ResponseEntity<>(reviewResponseDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "리뷰 최신 목록 조회 RENTER")
-    @GetMapping("/list-renter")
-    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getAllReviewsRENTER(@RequestParam(value = "page", defaultValue = "1") int page) {
-        Page<ReviewDto.ReviewResponseDto> reviewsResponseDto = reviewService.getAllReviewsRENTER(page);
-        return new ResponseEntity<>(reviewsResponseDto, HttpStatus.OK);
+    @Operation(summary = "내가 반납완료한 아이템의 주인에게 리뷰")
+    @PostMapping("/toOwner")
+    public ResponseEntity<ReviewDto.ReviewResponseDto> createOwnerReview(@RequestBody ReviewDto.ReviewRequestDto reviewRequestDto, HttpSession session) {
+
+        ReviewDto.ReviewResponseDto reviewRentedResponseDto = reviewService.createOwnerReview(reviewRequestDto, session);
+        return new ResponseEntity<>(reviewRentedResponseDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "리뷰 최신 목록 조회 RECEIVER")
-    @GetMapping("/list-receiver")
-    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getAllReviewsRECEIVER(@RequestParam(value = "page", defaultValue = "1") int page) {
-        Page<ReviewDto.ReviewResponseDto> reviewsResponseDto = reviewService.getAllReviewsRECEIVER(page);
-        return new ResponseEntity<>(reviewsResponseDto, HttpStatus.OK);
+    @Operation(summary = "나 로그인 : 남이 나에게 리뷰한 내역(내가 등록한 물품)",
+            description = "나 로그인 : \n\n" + "남이 나에게 리뷰한 내역(내가 등록한 물품)\n\n"
+                    + "현재 세션 로그인 사용자 = item_owner_id / personType = TOOWNER")
+    @GetMapping("/getOtherCreateReviewToMeInMyRegisterItem")
+    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getOtherCreateReviewToMeInMyRegisterItem(@RequestParam(value = "page", defaultValue = "1") int page, HttpSession session) {
+        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getOtherCreateReviewToMeInMyRegisterItem(session, page);
+        return ResponseEntity.ok(reviews);
     }
 
-    @Operation(summary = "아이템 아이디로 리뷰 조회", description = "{itemId} 자리에 상세 조회할 아이템 id를 전달해주세요.")
-    @GetMapping("/{itemId}")
-    public ResponseEntity<ReviewDto.ReviewResponseDto> getReviewByItemId(@PathVariable Long itemId) {
-        ReviewDto.ReviewResponseDto review = reviewService.getReviewByItemId(itemId);
-        return ResponseEntity.ok(review);
+    @Operation(summary = "나 로그인 : 남이 나에게 리뷰한 내역(내가 빌린 물품)",
+            description = "나 로그인 : \n\n" + "남이 나에게 리뷰한 내역(내가 빌린 물품)\n\n"
+                    + "현재 세션 로그인 사용자 = renter_user_id / personType = TORENTER")
+    @GetMapping("/getOtherCreateReviewToMeInMyRentedItem")
+    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getOtherCreateReviewToMeInMyRentedItem(@RequestParam(value = "page", defaultValue = "1") int page, HttpSession session) {
+        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getOtherCreateReviewToMeInMyRentedItem(session, page);
+        return ResponseEntity.ok(reviews);
     }
 
-    @Operation(summary = "유저 아이디로 별점 높은순 2개 조회", description = "{userId} 자리에 userId를 전달해주세요.")
-    @GetMapping("/{userId}/renter_shortView") //피그마 대여물건상세페이지 유저 밑에 2개 리뷰에 쓰기
-    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getReviewsByUserIdAndPersonTypeRENTERShortView(
-            @PathVariable Long userId,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
-        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getReviewsByUserIdAndPersonTypeRENTERShortView(userId, page);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    @Operation(summary = "나 로그인 : 내가 남에게 리뷰한 내역(내가 빌린 물품의 주인에게)",
+            description = "나 로그인 : \n\n" +"내가 남에게 리뷰한 내역(내가 빌린 물품의 주인에게)\n\n"
+                    + "현재 세션 로그인 사용자 = user_id  / personType = TOOWNER")
+    @GetMapping("/getCreatedReviewToOwnerByMe")
+    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getCreatedReviewToOwnerByMe(@RequestParam(value = "page", defaultValue = "1") int page, HttpSession session) {
+        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getCreatedReviewToOwnerByMe(session, page);
+        return ResponseEntity.ok(reviews);
     }
 
-    @Operation(summary = "유저 아이디로 RENTER 별점 높은순 조회", description = "{userId} 자리에 userId를 전달해주세요.")
-    @GetMapping("/{userId}/renter_RENTER")
-    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getReviewsByUserIdAndPersonTypeRENTER(
-            @PathVariable Long userId,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
-        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getReviewsByUserIdAndPersonTypeRENTER(userId, page);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
+    @Operation(summary = "나 로그인 : 내가 남에게 리뷰한 내역(내가 등록한 물품의 대여자에게)",
+            description = "나 로그인 : \n\n" + "내가 남에게 리뷰한 내역(내가 등록한 물품의 대여자에게)\n\n"
+                    + "현재 세션 로그인 사용자 = user_id  / personType = TORENTER")
+    @GetMapping("/getCreatedReviewToRenterByMe")
+    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getCreatedReviewToRenterByMe(@RequestParam(value = "page", defaultValue = "1") int page, HttpSession session) {
+        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getCreatedReviewToRenterByMe(session, page);
+        return ResponseEntity.ok(reviews);
+    }
+    @Operation(summary = "리뷰 상세 조회")
+    @GetMapping("/{reviewId}")
+    public ResponseEntity<ReviewDto.ReviewResponseDto> getReviewById(@PathVariable Long reviewId) {
+        Optional<ReviewDto.ReviewResponseDto> optionalReviewResponseDto = reviewService.getReviewById(reviewId);
+
+        return optionalReviewResponseDto.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "유저 아이디로 RECEIVER 별점 높은순 조회", description = "{userId} 자리에 userId를 전달해주세요.")
-    @GetMapping("/{userId}/renter_RECEIVER")
-    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getReviewsByUserIdAndPersonTypeRECEIVER(
-            @PathVariable Long userId,
-            @RequestParam(value = "page", defaultValue = "1") int page) {
-        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getReviewsByUserIdAndPersonTypeRECEIVER(userId, page);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
-    }
-
-    @GetMapping("/{userId}/average/{personType}")
-    public ResponseEntity<BigDecimal> getAverageScoreByPersonType(
-            @PathVariable Long userId,
-            @PathVariable PersonType personType) {
-        BigDecimal averageScore = reviewService.getAverageScoreByUserIdAndPersonType(userId, personType);
-        return ResponseEntity.ok(averageScore);
-    }
-
-    @GetMapping("/{userId}/average")
-    public ResponseEntity<BigDecimal> getOverallAverageScore(
-            @PathVariable Long userId) {
-        BigDecimal overallAverageScore = reviewService.getOverallAverageScoreByUserId(userId);
-        return ResponseEntity.ok(overallAverageScore);
-    }
-
-    @Operation(summary = "리뷰 삭제", description = "review id를 입력하세요, 로그인 한 사용자의 리뷰가 아니면 삭제가 되지않습니다.")
-    @DeleteMapping("{reviewId}")
-    public ResponseEntity<?> deleteReview(@PathVariable Long reviewId, HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute("user");
-        reviewService.deleteReview(reviewId, user);
-        return ResponseEntity.ok().build();
+    @GetMapping("/getLatestAndHighestScoreReviews")
+    public ResponseEntity<List<ReviewDto.ReviewResponseDto>> getLatestAndHighestScoreReviews(HttpSession session) {
+        List<ReviewDto.ReviewResponseDto> reviews = reviewService.getLatestAndHighestScoreReviews(session);
+        return ResponseEntity.ok(reviews);
     }
 }
 

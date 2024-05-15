@@ -2,6 +2,7 @@ package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -32,14 +33,23 @@ public class Review extends BaseEntity {
     @Column(nullable = false)
     private PersonType personType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private Long renterUserId; //내 물품 빌린사람 id
+    private String renterNickName; //내 물품 빌린사람 닉네임
+    private String renterProfile; //내 물품 빌린사람 프로필
+
+    private Long itemOwnerId;
+    private String ownerNickName; //내가 예약해서 반납한 아이템 주인의 닉네임
+    private String ownerProfile; //내가 예약해서 반납한 아이템 주인의 프로필
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "item_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "reservation_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Item item;
-
+    private Reservations reservations;
 }

@@ -1,11 +1,14 @@
 package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +40,10 @@ public class User {
 
     private String status;
 
+    private BigDecimal ownerReviewScore;
+
+    private BigDecimal renterReviewScore;
+
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial; //공공 로그인 or 개인 로그인
 
@@ -44,11 +51,22 @@ public class User {
     private String defaultProfile; //프로필사진
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Item> items = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Notification> notifications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Reservations> reservations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Community> communities = new ArrayList<>();
 }

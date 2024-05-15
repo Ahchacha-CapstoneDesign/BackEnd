@@ -2,11 +2,15 @@ package ahchacha.ahchacha.service;
 
 import ahchacha.ahchacha.aws.AmazonS3Manager;
 import ahchacha.ahchacha.domain.Item;
+import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
 import ahchacha.ahchacha.domain.common.enums.Category;
+import ahchacha.ahchacha.domain.common.enums.RentingStatus;
+import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.repository.ItemRepository;
+import ahchacha.ahchacha.repository.ReservationRepository;
 import ahchacha.ahchacha.repository.UserRepository;
 import ahchacha.ahchacha.repository.UuidRepository;
 import jakarta.servlet.http.HttpSession;
@@ -18,10 +22,7 @@ import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -29,6 +30,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
+    private final ReservationRepository reservationRepository;
 
     @Transactional
     public ItemDto.ItemResponseDto createItem(ItemDto.ItemRequestDto itemDto,
@@ -54,19 +56,18 @@ public class ItemService {
                 .user(user)
                 .title(itemDto.getTitle())
                 .pricePerHour(itemDto.getPricePerHour())
-//                .firstPrice(itemDto.getFirstPrice())
                 .canBorrowDateTime(itemDto.getCanBorrowDateTime())
                 .returnDateTime(itemDto.getReturnDateTime())
                 .borrowPlace(itemDto.getBorrowPlace())
                 .returnPlace(itemDto.getReturnPlace())
                 .introduction((itemDto.getIntroduction()))
-                .reservation(itemDto.getReservation())
+                .reservation(Reservation.YES)
+                .rentingStatus(RentingStatus.NONE)
+                .itemStatus(itemDto.getItemStatus())
                 .imageUrls(pictureUrls)
                 .category(itemDto.getCategory())
                 .personOrOfficial(user.getPersonOrOfficial())
                 .build();
-
-//        item.setFirstPrice(itemDto.getPricePerHour());
 
         Item createdItem = itemRepository.save(item);
         return ItemDto.ItemResponseDto.toDto(createdItem);
@@ -83,6 +84,98 @@ public class ItemService {
         }
 
         return optionalItem.map(ItemDto.ItemResponseDto::toDto);
+    }
+
+    @Transactional
+    public ItemDto.ItemResponseDto updateItem(Long itemId, ItemDto.ItemRequestDto itemDto, List<MultipartFile> files, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        // 아이템 ID로 아이템 조회
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new IllegalArgumentException("Invalid item Id: " + itemId));
+
+        if (!item.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update this item.");
+        }
+
+        List<String> pictureUrls = new ArrayList<>();
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder()
+                        .uuid(uuid).build());
+                String pictureUrl = s3Manager.uploadFile(s3Manager.generateItemKeyName(savedUuid), file);
+                pictureUrls.add(pictureUrl);
+
+                System.out.println("s3 url(클릭 시 브라우저에 사진 뜨는지 확인): " + pictureUrl);
+            }
+        }
+
+        item.setTitle(itemDto.getTitle());
+        item.setPricePerHour(itemDto.getPricePerHour());
+        item.setCanBorrowDateTime(itemDto.getCanBorrowDateTime());
+        item.setReturnDateTime(itemDto.getReturnDateTime());
+        item.setBorrowPlace(itemDto.getBorrowPlace());
+        item.setReturnPlace(itemDto.getReturnPlace());
+        item.setIntroduction(itemDto.getIntroduction());
+        item.setItemStatus(itemDto.getItemStatus());
+        item.setCategory(itemDto.getCategory());
+        item.setPersonOrOfficial(user.getPersonOrOfficial());
+        item.setImageUrls(pictureUrls);
+
+
+        Item updatedItem = itemRepository.save(item);
+        return ItemDto.ItemResponseDto.toDto(updatedItem);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllMyRegisteredItems(int page, User user) { //내가 등록한 아이템들 보여주기
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt")); // 최근 작성순
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        return itemRepository.findByUser(user, pageable)
+                .map(ItemDto.ItemResponseDto::toDto);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByReservationYes(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndReservation(user, Reservation.YES, pageable);
+        return ItemDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByReserved(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndRentingStatus(user, RentingStatus.RESERVED, pageable);
+        return ItemDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByRenting(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndRentingStatus(user, RentingStatus.RENTING, pageable);
+        return ItemDto.toDtoPage(itemPage);
+    }
+
+    @Transactional
+    public Page<ItemDto.ItemResponseDto> getAllItemsByReturned(int page, User user) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        Page<Item> itemPage = itemRepository.findByUserAndRentingStatus(user, RentingStatus.RETURNED, pageable);
+        return ItemDto.toDtoPage(itemPage);
     }
 
     public Page<ItemDto.ItemResponseDto> getAllItems(int page) {

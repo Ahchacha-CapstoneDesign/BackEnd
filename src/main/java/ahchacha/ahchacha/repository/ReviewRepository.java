@@ -1,6 +1,7 @@
 package ahchacha.ahchacha.repository;
 
 import ahchacha.ahchacha.domain.Review;
+import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,19 +10,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review,Long> {
 
-    Page<Review> findByPersonType(PersonType personType, Pageable pageable);
+    Page<Review> findAllByItemOwnerIdAndPersonType(Long itemOwnerId, PersonType personType, Pageable pageable);
 
-    Optional<Review> findByItemId(Long itemId);
+    Page<Review> findAllByRenterUserIdAndPersonType(Long renterUserId, PersonType personType, Pageable pageable);
 
-    Page<Review> findByUserIdAndPersonType(Long userId, PersonType personType, Pageable pageable);
+    Page<Review> findAllByUserIdAndPersonType(Long userId, PersonType personType, Pageable pageable);
 
-    @Query("SELECT AVG(r.reviewScore) FROM Review r WHERE r.user.id = :userId AND r.personType = :personType")
-    BigDecimal findAverageScoreByUserIdAndPersonType(@Param("userId") Long userId, @Param("personType") PersonType personType);
+    List<Review> findByItemOwnerId(Long itemOwnerId);
 
-    @Query("SELECT AVG(r.reviewScore) FROM Review r WHERE r.user.id = :userId")
-    BigDecimal findAverageScoreByUserId(@Param("userId") Long userId);
+    List<Review> findByRenterUserId(Long renterUserId);
 }

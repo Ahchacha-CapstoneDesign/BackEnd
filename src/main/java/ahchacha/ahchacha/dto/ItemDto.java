@@ -1,10 +1,7 @@
 package ahchacha.ahchacha.dto;
 
 import ahchacha.ahchacha.domain.Item;
-import ahchacha.ahchacha.domain.User;
-import ahchacha.ahchacha.domain.common.enums.Category;
-import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
-import ahchacha.ahchacha.domain.common.enums.Reservation;
+import ahchacha.ahchacha.domain.common.enums.*;
 import lombok.*;
 import org.springframework.data.domain.Page;
 import java.time.LocalDateTime;
@@ -20,13 +17,12 @@ public class ItemDto {
     public static class ItemRequestDto {
         private String title;
         private int pricePerHour;
-//        private int firstPrice;
         private LocalDateTime canBorrowDateTime;
         private LocalDateTime returnDateTime;
         private String borrowPlace;
         private String returnPlace;
         private String introduction;
-        private Reservation reservation;
+        private ItemStatus itemStatus;
         private Category category;
     }
 
@@ -38,19 +34,22 @@ public class ItemDto {
         private Long id;
         private String title;
         private int pricePerHour;
-//        private int firstPrice;
         private LocalDateTime canBorrowDateTime;
         private LocalDateTime returnDateTime;
         private String borrowPlace;
         private String returnPlace;
         private String introduction;
         private Reservation reservation;
+        private RentingStatus rentingStatus;
+        private ItemStatus itemStatus;
         private List<String> imageUrls;
         private Category category;
         private int viewCount;
         private PersonOrOfficial personOrOfficial;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
+        private String userProfile; //아이템 등록한사람 프로필
+        private String userNickName; //아이템 등록한사람 닉네임
 
         public static ItemResponseDto toDto(Item item) {
             return ItemResponseDto.builder()
@@ -58,19 +57,22 @@ public class ItemDto {
                     .id(item.getId())
                     .title(item.getTitle())
                     .pricePerHour(item.getPricePerHour())
-//                    .firstPrice(item.getFirstPrice())
                     .canBorrowDateTime(item.getCanBorrowDateTime())
                     .returnDateTime(item.getReturnDateTime())
                     .borrowPlace(item.getBorrowPlace())
                     .returnPlace(item.getReturnPlace())
                     .introduction(item.getIntroduction())
                     .reservation(item.getReservation())
+                    .rentingStatus(item.getRentingStatus())
+                    .itemStatus(item.getItemStatus())
                     .imageUrls(item.getImageUrls())
                     .category(item.getCategory())
                     .viewCount(item.getViewCount())
                     .personOrOfficial(item.getPersonOrOfficial())
                     .createdAt(item.getCreatedAt())
                     .updatedAt(item.getUpdatedAt())
+                    .userProfile(item.getUser().getDefaultProfile())
+                    .userNickName(item.getUser().getNickname())
                     .build();
         }
     }

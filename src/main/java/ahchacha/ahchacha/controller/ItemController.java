@@ -3,12 +3,16 @@ package ahchacha.ahchacha.controller;
 import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.Category;
+import ahchacha.ahchacha.domain.common.enums.ItemStatus;
+import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
 import ahchacha.ahchacha.dto.ItemDto;
+import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,14 +27,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
     private final ItemService itemService;
+    private final ItemRepository itemRepository;
 
-    @Autowired
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
+
 
     @Operation(summary = "아이템 등록", description = "canBorrowDateTime/returnDateTime 예시 : 2024-03-17T10:26:08")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -42,9 +45,31 @@ public class ItemController {
                                                           @RequestParam(name = "borrowPlace") String borrowPlace,
                                                           @RequestParam(name = "returnPlace") String returnPlace,
                                                           @RequestParam(name = "introduction") String introduction,
-                                                          @RequestParam(name = "reservation") Reservation reservation,
+                                                          @RequestParam(name = "itemStatus") String itemStatusString,
                                                           @RequestParam(name = "category") Category category,
                                                           HttpSession session){
+
+        ItemStatus itemStatus;
+        switch (itemStatusString) {
+            case "NEW":
+                itemStatus = ItemStatus.NEW;
+                break;
+            case "LITTLEUSE":
+                itemStatus = ItemStatus.LITTLEUSE;
+                break;
+            case "LESSUSE":
+                itemStatus = ItemStatus.LESSUSE;
+                break;
+            case "MOREUSE":
+                itemStatus = ItemStatus.MOREUSE;
+                break;
+            case "BREAK":
+                itemStatus = ItemStatus.BREAK;
+                break;
+            default:
+                itemStatus = ItemStatus.NEW;
+                break;
+        }
 
         ItemDto.ItemRequestDto itemRequestDto = ItemDto.ItemRequestDto.builder()
                 .title(title)
@@ -54,7 +79,7 @@ public class ItemController {
                 .borrowPlace(borrowPlace)
                 .returnPlace(returnPlace)
                 .introduction(introduction)
-                .reservation(reservation)
+                .itemStatus(itemStatus)
                 .category(category)
                 .build();
 
@@ -62,9 +87,121 @@ public class ItemController {
         return new ResponseEntity<>(itemResponseDto, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "아이템 수정", description = "canBorrowDateTime/returnDateTime 예시 : 2024-03-17T10:26:08")
+    @PostMapping(value = "/{itemId}/update", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ItemDto.ItemResponseDto> updateItem(
+            @PathVariable Long itemId,
+            @RequestPart(value = "file", required = false) List<MultipartFile> files,
+            @RequestParam(name = "title") String title,
+            @RequestParam(name = "pricePerHour") int pricePerHour,
+            @RequestParam(name = "canBorrowDateTime") LocalDateTime canBorrowDateTime,
+            @RequestParam(name = "returnDateTime") LocalDateTime returnDateTime,
+            @RequestParam(name = "borrowPlace") String borrowPlace,
+            @RequestParam(name = "returnPlace") String returnPlace,
+            @RequestParam(name = "introduction") String introduction,
+            @RequestParam(name = "itemStatus") String itemStatusString,
+            @RequestParam(name = "category") Category category,
+            HttpSession session) {
+
+        ItemStatus itemStatus;
+        switch (itemStatusString) {
+            case "NEW":
+                itemStatus = ItemStatus.NEW;
+                break;
+            case "LITTLEUSE":
+                itemStatus = ItemStatus.LITTLEUSE;
+                break;
+            case "LESSUSE":
+                itemStatus = ItemStatus.LESSUSE;
+                break;
+            case "MOREUSE":
+                itemStatus = ItemStatus.MOREUSE;
+                break;
+            case "BREAK":
+                itemStatus = ItemStatus.BREAK;
+                break;
+            default:
+                itemStatus = ItemStatus.NEW;
+                break;
+        }
+
+        ItemDto.ItemRequestDto itemRequestDto = ItemDto.ItemRequestDto.builder()
+                .title(title)
+                .pricePerHour(pricePerHour)
+                .canBorrowDateTime(canBorrowDateTime)
+                .returnDateTime(returnDateTime)
+                .borrowPlace(borrowPlace)
+                .returnPlace(returnPlace)
+                .introduction(introduction)
+                .itemStatus(itemStatus)
+                .category(category)
+                .build();
+
+        ItemDto.ItemResponseDto itemResponseDto = itemService.updateItem(itemId, itemRequestDto, files, session);
+        return new ResponseEntity<>(itemResponseDto, HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "내가 등록한 item들 조회")
+    @GetMapping("/myItems")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getMyItems(HttpServletRequest request,
+                                                                    @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> myItems = itemService.getAllMyRegisteredItems(page, currentUser);
+
+        return ResponseEntity.ok(myItems);
+    }
+
+    @Operation(summary = "대여가능 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/reservationYES")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReservationYes(HttpServletRequest request,
+                                                                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByReservationYes(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
+    @Operation(summary = "예약완료 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/rentingStatusRESERVED")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReserved(HttpServletRequest request,
+                                                                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByReserved(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
+    @Operation(summary = "대여중 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/rentingStatusRENTING")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByRenting(HttpServletRequest request,
+                                                                               @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByRenting(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
+    @Operation(summary = "반납완료 물품 페이징(마이페이지-등록내역)")
+    @GetMapping("/rentingStatusRETURNED")
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReturned(HttpServletRequest request,
+                                                                              @RequestParam(value = "page", defaultValue = "1") int page) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByReturned(page, currentUser);
+        return ResponseEntity.ok(itemsDtoPage);
+    }
+
+
     @Operation(summary = "아이템 상세 조회", description = "{itemId} 자리에 상세 조회할 아이템 id를 전달해주세요.")
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto.ItemResponseDto> getTalkById(@PathVariable Long itemId) {
+    public ResponseEntity<ItemDto.ItemResponseDto> getItemById(@PathVariable Long itemId) {
         Optional<ItemDto.ItemResponseDto> optionalItemDto = itemService.getItemById(itemId);
 
         return optionalItemDto.map(ResponseEntity::ok)
@@ -80,7 +217,7 @@ public class ItemController {
 
     @Operation(summary = "조회수 많은 순으로 아이템 목록 조회")
     @GetMapping("/view-counts")
-    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllTalksByViewCounts(@RequestParam(value = "page", defaultValue = "1") int page) {
+    public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByViewCounts(@RequestParam(value = "page", defaultValue = "1") int page) {
         Page<ItemDto.ItemResponseDto> itemsDtoPage = itemService.getAllItemsByViewCount(page);
         return ResponseEntity.ok(itemsDtoPage);
     }

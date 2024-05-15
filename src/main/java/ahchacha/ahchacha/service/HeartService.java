@@ -44,7 +44,7 @@ public class HeartService {
         community.setLikeCount(community.getLikeCount() + 1 );
         communityRepository.save(community);
 
-        sendNotification(heart.getCommunity().getUser(), heart);
+//        sendNotification(heart.getCommunity().getUser(), heart);
 
         return HeartDto.CommunityLikeResponseDto.toDtoFromCommunity(heart);
     }
@@ -64,6 +64,15 @@ public class HeartService {
             community.setLikeCount(community.getLikeCount() - 1);
             communityRepository.save(community);
         }
+    }
+
+    public Boolean validateIfUserLikedCommunity(Long communityId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Community community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new IllegalArgumentException("개시글을 찾을 수 없습니다."));
+
+        Optional<Heart> likeOptional = checkIfUserLiked(user, community);
+        return likeOptional.isPresent();
     }
 
     public Optional<Heart> checkIfUserLikedComment(User user, Comment comment) {
@@ -119,6 +128,15 @@ public class HeartService {
                 .build();
 
         notificationRepository.save(notification);
+    }
+
+    public Boolean validateIfUserLikedComment(Long commentId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
+
+        Optional<Heart> likeOptional = checkIfUserLikedComment(user, comment);
+        return likeOptional.isPresent();
     }
 
 

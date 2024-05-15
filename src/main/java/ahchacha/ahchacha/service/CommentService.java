@@ -42,7 +42,7 @@ public class CommentService {
         community.get().setCommentCount(community.get().getCommentCount() + 1);
         communityRepository.save(community.get());
 
-        sendNotification(savedComment.getCommunity().getUser(), savedComment);
+//        sendNotification(savedComment.getCommunity().getUser(), savedComment);
 
         return CommentDto.CommentResponseDto.toDto(savedComment);
     }
@@ -62,11 +62,28 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long id, User currentUser) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+        Community community = comment.getCommunity();
 
         if (!comment.getUser().getId().equals(currentUser.getId())) {
             throw new IllegalArgumentException("You do not have permission to delete this comment.");
         }
+
+        if (comment.getParentId() != null) {
+            // 대댓글 삭제 시 replyCount 1 감소
+            community.setReplyCount(community.getReplyCount() - 1);
+        } else {
+            // 댓글 삭제 시 commentCount 1 감소
+            community.setCommentCount(community.getCommentCount() - 1);
+
+            // 해당 댓글에 속한 대댓글 수도 찾아서 감소
+            int replyCount = commentRepository.countByParentId_Id(comment.getId());
+            community.setReplyCount(community.getReplyCount() - replyCount);
+        }
+
+        communityRepository.save(community);
         commentRepository.delete(comment);
+
+
     }
 
     @Transactional(readOnly = true)
@@ -98,9 +115,11 @@ public class CommentService {
 
         // 댓글 수 업데이트
         community.get().setReplyCount(community.get().getReplyCount() + 1);
-        communityRepository.save(community.get());
+        community.get().setCommentCount(community.get().getCommentCount() + 1);
 
-        sendNotification(savedComment.getCommunity().getUser(), savedComment);
+        communityRepository.save(community.get());
+//
+//        sendNotification(savedComment.getCommunity().getUser(), savedComment);
 
         return CommentDto.CommentResponseDto.toDto(savedComment);
     }

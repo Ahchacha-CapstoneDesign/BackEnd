@@ -1,9 +1,9 @@
 package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
-import ahchacha.ahchacha.domain.common.enums.Category;
-import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
-import ahchacha.ahchacha.domain.common.enums.Reservation;
+import ahchacha.ahchacha.domain.common.enums.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -11,6 +11,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,9 +30,6 @@ public class Item extends BaseEntity {
 
     @Column(name = "pricePerHour")
     private int pricePerHour; //대여비
-
-//    @Column(name = "first_price")
-//    private int firstPrice; //보증금
 
     @Column(name = "canBorrowDateTime")
     private LocalDateTime canBorrowDateTime; //대여가능 날짜,시간
@@ -53,6 +51,14 @@ public class Item extends BaseEntity {
     @Column(nullable = false)
     private Reservation reservation; // 예약 가능, 불가
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RentingStatus rentingStatus; // NONE, 예약완료, 대여중, 반납완료
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ItemStatus itemStatus; //새상품, 사용감 없음, 사용감적음, 사용감많음, 파손/고장상품
+
     @ElementCollection
     @CollectionTable(name = "item_images", joinColumns = @JoinColumn(name = "item_id"))
     @Column(name = "image_url")
@@ -70,18 +76,17 @@ public class Item extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial;
 
-//    public void setFirstPrice(int pricePerHour) {
-//        this.pricePerHour = pricePerHour;
-//        // 대여비의 10% -> 보증금
-//        this.firstPrice = (int) (pricePerHour * 0.1);
-//    }
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
-    @OneToOne(mappedBy = "item", cascade = CascadeType.ALL)
-    private Review review;
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Reservations> reservations = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JsonManagedReference
+//    private List<Review> review = new ArrayList<>();
 }

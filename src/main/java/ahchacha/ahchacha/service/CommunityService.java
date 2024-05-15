@@ -15,10 +15,7 @@ import org.springframework.data.domain.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -58,17 +55,39 @@ public class CommunityService {
     }
 
     // 커뮤니티 상세 조회
-    public Optional<CommunityDto.CommunityResponseDto> getCommunityById(Long id) {
-        Optional<Community> optionalCommunity = communityRepository.findById(id);
+//    public Optional<CommunityDto.CommunityResponseDto> getCommunityById(Long id) {
+//        Optional<Community> optionalCommunity = communityRepository.findById(id);
+//
+//        if (optionalCommunity.isPresent()) {
+//            Community community= optionalCommunity.get();
+//
+//            community.setViewCount(community.getViewCount()+1);
+//
+//            communityRepository.save(community);
+//        }
+//
+//        return optionalCommunity.map(CommunityDto.CommunityResponseDto::toDto);
+//    }
 
-        if (optionalCommunity.isPresent()) {
-            Community community= optionalCommunity.get();
-
-            community.setViewCount(community.getViewCount()+1);
-            communityRepository.save(community);
+    public Optional<CommunityDto.CommunityResponseDto> getCommunityById(Long id, HttpSession session) {
+        Set<Long> viewedPosts = (Set<Long>) session.getAttribute("viewedPosts");
+        if (viewedPosts == null) {
+            viewedPosts = new HashSet<>();
+            session.setAttribute("viewedPosts", viewedPosts);
         }
 
-        return optionalCommunity.map(CommunityDto.CommunityResponseDto::toDto);
+        Optional<Community> optionalCommunity = communityRepository.findById(id);
+        if (optionalCommunity.isPresent()) {
+            Community community = optionalCommunity.get();
+            // 세션에 저장된 조회 정보를 확인하여 중복 조회를 방지
+            if (!viewedPosts.contains(id)) {
+                community.incrementViewCount();
+                communityRepository.save(community);
+                viewedPosts.add(id);
+            }
+            return Optional.of(CommunityDto.CommunityResponseDto.toDto(community));
+        }
+        return Optional.empty();
     }
 
     public Page<CommunityDto.CommunityResponseDto> getAllCommunity(int page) {

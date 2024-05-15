@@ -1,7 +1,9 @@
 package ahchacha.ahchacha.controller;
+import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.dto.HeartDto;
 import ahchacha.ahchacha.service.HeartService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,15 @@ public class HeartController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "게시글 좋아요 여부 확인", description = "{communityId} 자리에 게시글 id를 전달해주세요. 좋아요한 경우 true, 좋아요 안 한 경우 false 반환")
+    @GetMapping("/likes/community/{communityId}")
+    public ResponseEntity<Boolean> validateIfUserLikedCommunity(@PathVariable Long communityId, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        Boolean isLiked = heartService.validateIfUserLikedCommunity(communityId, request.getSession());
+
+        return ResponseEntity.ok(isLiked);
+    }
+
     @Operation(summary = "댓글에 좋아요", description = "{commentId} 자리에 좋아요할 댓글 id를 전달해주세요.")
     @PostMapping("/likes/comment/{commentId}")
     public ResponseEntity<HeartDto.CommentLikeResponseDto> addLikeComment(@PathVariable Long commentId, HttpSession session) throws Exception {
@@ -37,5 +48,14 @@ public class HeartController {
     public ResponseEntity<Void> deleteLikeComment(@PathVariable Long commentId, HttpSession session) {
         heartService.deleteCommentLike(commentId, session);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "댓글 좋아요 여부 확인", description = "{commentId} 자리에 댓글 id를 전달해주세요. 좋아요한 경우 true, 좋아요 안 한 경우 false 반환")
+    @GetMapping("/likes/comment/{commentId}")
+    public ResponseEntity<Boolean> validateIfUserLikedComment(@PathVariable Long commentId, HttpServletRequest request){
+        User user = (User) request.getSession().getAttribute("user");
+        Boolean isLiked = heartService.validateIfUserLikedComment(commentId, request.getSession());
+
+        return ResponseEntity.ok(isLiked);
     }
 }
