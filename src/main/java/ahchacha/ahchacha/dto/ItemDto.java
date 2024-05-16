@@ -4,6 +4,8 @@ import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.common.enums.*;
 import lombok.*;
 import org.springframework.data.domain.Page;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -51,6 +53,10 @@ public class ItemDto {
         private String userProfile; //아이템 등록한사람 프로필
         private String userNickName; //아이템 등록한사람 닉네임
 
+        private BigDecimal ownerReviewScore;
+        private BigDecimal renterReviewScore;
+
+
         public static ItemResponseDto toDto(Item item) {
             return ItemResponseDto.builder()
                     .userId(item.getUser().getId())
@@ -73,6 +79,10 @@ public class ItemDto {
                     .updatedAt(item.getUpdatedAt())
                     .userProfile(item.getUser().getDefaultProfile())
                     .userNickName(item.getUser().getNickname())
+
+                    .ownerReviewScore(item.getUser().getOwnerReviewScore())
+                    .renterReviewScore(item.getUser().getRenterReviewScore())
+
                     .build();
         }
     }
