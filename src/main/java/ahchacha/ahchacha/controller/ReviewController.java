@@ -3,6 +3,7 @@ package ahchacha.ahchacha.controller;
 import ahchacha.ahchacha.domain.Review;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
+import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.dto.ReviewDto;
 import ahchacha.ahchacha.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -73,6 +76,20 @@ public class ReviewController {
     @GetMapping("/getCreatedReviewToRenterByMe")
     public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getCreatedReviewToRenterByMe(@RequestParam(value = "page", defaultValue = "1") int page, HttpSession session) {
         Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getCreatedReviewToRenterByMe(session, page);
+        return ResponseEntity.ok(reviews);
+    }
+    @Operation(summary = "리뷰 상세 조회")
+    @GetMapping("/{reviewId}")
+    public ResponseEntity<ReviewDto.ReviewResponseDto> getReviewById(@PathVariable Long reviewId) {
+        Optional<ReviewDto.ReviewResponseDto> optionalReviewResponseDto = reviewService.getReviewById(reviewId);
+
+        return optionalReviewResponseDto.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/getLatestAndHighestScoreReviews")
+    public ResponseEntity<List<ReviewDto.ReviewResponseDto>> getLatestAndHighestScoreReviews(HttpSession session) {
+        List<ReviewDto.ReviewResponseDto> reviews = reviewService.getLatestAndHighestScoreReviews(session);
         return ResponseEntity.ok(reviews);
     }
 }
