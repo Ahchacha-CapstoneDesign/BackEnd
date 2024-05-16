@@ -163,6 +163,18 @@ public class ReviewService {
         return ReviewDto.toDtoPage(reviews);
     }
 
+    @Transactional
+    public Page<ReviewDto.ReviewResponseDto> getReviewsByRenterUserId(Long renterUserId, int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+
+        Page<Review> reviews = reviewRepository.findAllByRenterUserIdAndPersonType(renterUserId, PersonType.TORENTER, pageable);
+
+        return ReviewDto.toDtoPage(reviews);
+    }
+
 
     private void updateAverageReviewScore(Long itemOwnerId) {
         // 아이템 주인의 모든 리뷰 점수를 가져와서 평균 계산
