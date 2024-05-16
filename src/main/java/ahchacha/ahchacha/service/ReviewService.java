@@ -151,6 +151,19 @@ public class ReviewService {
         return ReviewDto.toDtoPage(reviews);
     }
 
+    @Transactional
+    public Page<ReviewDto.ReviewResponseDto> getReviewsByItemOwnerId(Long itemOwnerId, int page) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createdAt"));
+
+        Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
+        // itemOwnerId에 대해 TOOWNER인 리뷰를 가져옵니다.
+        Page<Review> reviews = reviewRepository.findAllByItemOwnerIdAndPersonType(itemOwnerId, PersonType.TOOWNER, pageable);
+        // ReviewResponseDto로 변환하여 반환합니다.
+        return ReviewDto.toDtoPage(reviews);
+    }
+
+
     private void updateAverageReviewScore(Long itemOwnerId) {
         // 아이템 주인의 모든 리뷰 점수를 가져와서 평균 계산
         List<Review> itemOwnerReviews = reviewRepository.findByItemOwnerId(itemOwnerId);

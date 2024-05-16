@@ -24,4 +24,7 @@ public interface ReviewRepository extends JpaRepository<Review,Long> {
     List<Review> findByItemOwnerId(Long itemOwnerId);
 
     List<Review> findByRenterUserId(Long renterUserId);
+
+    Page<Review> findAllByItemOwnerIdAndPersonTypeOrderByCreatedAtDesc(Long itemOwnerId, PersonType personType, Pageable pageable);
+
 }
