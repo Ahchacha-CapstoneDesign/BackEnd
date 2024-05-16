@@ -1,6 +1,7 @@
 package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
+import ahchacha.ahchacha.domain.common.enums.Reservation;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,12 @@ public class Notification extends BaseEntity {
     @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Heart heart;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservations_id")
+    @JsonBackReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Reservations reservations;
 
     private boolean isRead;
 }

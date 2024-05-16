@@ -38,6 +38,7 @@ public class NotificationService {
                                 .comment(notification.getComment().getContent())
                                 .communityId(notification.getComment().getCommunity().getId())
                                 .communityTitle(null)
+                                .itemTitle(null)
                                 .createdAt(notification.getCreatedAt());
                     } else if (notification.getHeart() != null) {
                         // 좋아요 알림인 경우
@@ -46,6 +47,16 @@ public class NotificationService {
                                 .comment(null)
                                 .communityId(notification.getHeart().getCommunity().getId())
                                 .communityTitle(notification.getHeart().getCommunity().getTitle())
+                                .itemTitle(null)
+                                .createdAt(notification.getCreatedAt());
+                    } else if (notification.getReservations() != null) {
+                        // 예약 완료 알림인 경우
+                        builder.writer(notification.getReservations().getItem().getUser().getNickname())
+                                .commentId(null)
+                                .comment(null)
+                                .communityId(null)
+                                .communityTitle(null)
+                                .itemTitle(notification.getReservations().getItem().getTitle())
                                 .createdAt(notification.getCreatedAt());
                     }
 
