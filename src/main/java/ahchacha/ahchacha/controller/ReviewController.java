@@ -78,6 +78,24 @@ public class ReviewController {
         Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getCreatedReviewToRenterByMe(session, page);
         return ResponseEntity.ok(reviews);
     }
+
+    @Operation(summary = "아이템 상세의 등록자로서 받은 리뷰(대여자 -> 등록자(아이템등록자)")
+    @GetMapping("/reviewDetails/itemOwner/{itemOwnerId}")
+    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getReviewsByItemOwnerId(@PathVariable Long itemOwnerId,
+                                                                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getReviewsByItemOwnerId(itemOwnerId, page);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @Operation(summary = "아이템 상세의 대여자로서 받은 리뷰(등록자 -> 대여자(아이템등록자)")
+    @GetMapping("/reviewDetails/renter/{renterUserId}")
+    public ResponseEntity<Page<ReviewDto.ReviewResponseDto>> getReviewsByRenterUserId(@PathVariable Long renterUserId,
+                                                                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+        Page<ReviewDto.ReviewResponseDto> reviews = reviewService.getReviewsByRenterUserId(renterUserId, page);
+        return ResponseEntity.ok(reviews);
+    }
+
+
     @Operation(summary = "리뷰 상세 조회")
     @GetMapping("/{reviewId}")
     public ResponseEntity<ReviewDto.ReviewResponseDto> getReviewById(@PathVariable Long reviewId) {
