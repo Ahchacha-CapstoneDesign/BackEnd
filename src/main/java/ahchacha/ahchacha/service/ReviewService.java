@@ -5,6 +5,8 @@ import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.Review;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
+import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
+import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
 import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.dto.ReviewDto;
 import ahchacha.ahchacha.repository.ItemRepository;
@@ -58,7 +60,10 @@ public class ReviewService {
 
         Review createdReview = reviewRepository.save(review);
 
+        reservation.setToRenterWrittenStatus(ToRenterWrittenStatus.YES);
+
         updateAverageReviewScoreForRenter(reservation.getUser().getId());
+
 
         return ReviewDto.ReviewResponseDto.toDto(createdReview);
     }
@@ -90,8 +95,10 @@ public class ReviewService {
 
         Review createdReview = reviewRepository.save(review);
 
+        reservation.setToOwnerWrittenStatus(ToOwnerWrittenStatus.YES);
         // 리뷰가 작성될 때마다 해당 사용자의 리뷰 점수 업데이트
         updateAverageReviewScore(reservation.getItemUserId());
+
 
         return ReviewDto.ReviewResponseDto.toDto(createdReview);
     }
