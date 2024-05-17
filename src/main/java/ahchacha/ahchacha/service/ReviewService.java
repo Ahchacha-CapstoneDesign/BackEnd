@@ -1,19 +1,16 @@
 package ahchacha.ahchacha.service;
 
-import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.Review;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
 import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
 import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
-import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.dto.ReviewDto;
 import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.repository.ReservationRepository;
 import ahchacha.ahchacha.repository.ReviewRepository;
 import ahchacha.ahchacha.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -60,7 +57,7 @@ public class ReviewService {
 
         Review createdReview = reviewRepository.save(review);
 
-        reservation.setToRenterWrittenStatus(ToRenterWrittenStatus.YES);
+        reservation.setToRenterWrittenStatus(ToRenterWrittenStatus.WRITTEN);
 
         updateAverageReviewScoreForRenter(reservation.getUser().getId());
 
@@ -95,7 +92,7 @@ public class ReviewService {
 
         Review createdReview = reviewRepository.save(review);
 
-        reservation.setToOwnerWrittenStatus(ToOwnerWrittenStatus.YES);
+        reservation.setToOwnerWrittenStatus(ToOwnerWrittenStatus.WRITTEN);
         // 리뷰가 작성될 때마다 해당 사용자의 리뷰 점수 업데이트
         updateAverageReviewScore(reservation.getItemUserId());
 

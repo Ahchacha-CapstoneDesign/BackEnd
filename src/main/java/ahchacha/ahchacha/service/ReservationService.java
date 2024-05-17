@@ -193,8 +193,8 @@ public class ReservationService {
                 .user(user) //대여하는 사람의 학번
                 .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
 
-                .toRenterWrittenStatus(ToRenterWrittenStatus.NO) //리뷰 안쓴상태
-                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NO)
+                .toRenterWrittenStatus(ToRenterWrittenStatus.NONWRITTEN) //리뷰 안쓴상태
+                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NONWRITTEN)
 
                 .build();
 
@@ -202,7 +202,7 @@ public class ReservationService {
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
 
-        sendNotification(user, reservation);
+//        sendNotification(user, reservation);
     }
 
     //official이 올린 item 예약
@@ -241,8 +241,8 @@ public class ReservationService {
                 .imageUrls(imageUrl != null ? Collections.singletonList(imageUrl) : null)
                 .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
 
-                .toRenterWrittenStatus(ToRenterWrittenStatus.NO) //리뷰 안쓴상태
-                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NO)
+                .toRenterWrittenStatus(ToRenterWrittenStatus.NONWRITTEN) //리뷰 안쓴상태
+                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NONWRITTEN)
 
                 .build();
 
@@ -250,7 +250,7 @@ public class ReservationService {
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
 
-        sendNotification(user, reservation);
+//        sendNotification(user, reservation);
     }
 
     @Transactional
