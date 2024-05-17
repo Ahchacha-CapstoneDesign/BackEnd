@@ -44,8 +44,6 @@ public class CommentService {
         community.get().setCommentCount(community.get().getCommentCount() + 1);
         communityRepository.save(community.get());
 
-//        sendNotification(notiUser, comment);
-
         return CommentDto.CommentResponseDto.toDto(savedComment);
     }
 
@@ -120,8 +118,9 @@ public class CommentService {
         community.get().setCommentCount(community.get().getCommentCount() + 1);
 
         communityRepository.save(community.get());
-//
-        sendNotification(comment.getCommunity().getUser(), savedComment);
+
+        sendNotification(comment.getParentId().getUser(), savedComment);
+        System.out.println(comment.getParentId().getUser().getId());
 
         return CommentDto.CommentResponseDto.toDto(savedComment);
     }
