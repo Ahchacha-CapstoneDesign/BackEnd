@@ -4,9 +4,10 @@ import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.Notification;
 import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
-import ahchacha.ahchacha.dto.ItemDto;
+import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
 import ahchacha.ahchacha.dto.ReservationDto;
 import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.repository.NotificationRepository;
@@ -28,8 +29,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static java.lang.System.exit;
 
 
 @Service
@@ -195,13 +194,17 @@ public class ReservationService {
 
                 .user(user) //대여하는 사람의 학번
                 .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
+
+                .toRenterWrittenStatus(ToRenterWrittenStatus.NONWRITTEN) //리뷰 안쓴상태
+                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NONWRITTEN)
+
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약불가
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
 
-        sendNotification(user, reservation);
+//        sendNotification(user, reservation);
     }
 
     //official이 올린 item 예약
@@ -239,13 +242,17 @@ public class ReservationService {
 //                .imageUrls(Collections.singletonList(imageUrl))
                 .imageUrls(imageUrl != null ? Collections.singletonList(imageUrl) : null)
                 .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
+
+                .toRenterWrittenStatus(ToRenterWrittenStatus.NONWRITTEN) //리뷰 안쓴상태
+                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NONWRITTEN)
+
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
 
-        sendNotification(user, reservation);
+//        sendNotification(user, reservation);
     }
 
     @Transactional

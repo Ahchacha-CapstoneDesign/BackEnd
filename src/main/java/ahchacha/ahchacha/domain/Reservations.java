@@ -1,7 +1,9 @@
 package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
+import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
+import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -53,6 +55,9 @@ public class Reservations extends BaseEntity {
     private Long itemUserId; //아이템 등록한사람 id
     private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
     private String userDefaultProfile; //아이템 예약하는사람 프사
+
+    private ToRenterWrittenStatus toRenterWrittenStatus; //리뷰 쓴지(YES) 안쓴지(NO)
+    private ToOwnerWrittenStatus toOwnerWrittenStatus;
 
     @ElementCollection
     @CollectionTable(name = "reservations_images", joinColumns = @JoinColumn(name = "reservations_id"))
