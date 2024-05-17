@@ -26,6 +26,10 @@ public class ReviewDto {
     @Setter
     @Builder
     public static class ReviewResponseDto {
+        private Long itemId;
+        private String itemTitle;
+        private Long reservationId;
+
         private Long reviewId;
         private String reviewComment;
         private BigDecimal reviewScore;
@@ -45,6 +49,10 @@ public class ReviewDto {
 
         public static ReviewResponseDto toDto(Review review) {
             return ReviewResponseDto.builder()
+                    .itemId(review.getReservations().getItem().getId())
+                    .itemTitle(review.getReservations().getItem().getTitle())
+                    .reservationId(review.getReservations().getId())
+
                     .reviewId(review.getId())
                     .reviewComment(review.getReviewComment())
                     .reviewScore(review.getReviewScore())
