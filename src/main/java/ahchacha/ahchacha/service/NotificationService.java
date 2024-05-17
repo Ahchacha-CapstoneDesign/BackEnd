@@ -75,7 +75,7 @@ public class NotificationService {
         return responseDtos;
     }
 
-    @Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(cron = "0 */30 * * * *")
     public void sendReturnNotification() {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneHourLater = now.plusMinutes(60);
@@ -90,25 +90,26 @@ public class NotificationService {
 
             // 한 시간 전 예약에 대한 알림 생성
             for (Reservations reservation : oneHourReservations) {
-                if(reservation.isNotificationSent()) continue;
+                if(reservation.isNotificationSentHour()) continue;
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)
                         .isRead(false)
                         .build();
-                reservation.setNotificationSent(true);
+                reservation.setNotificationSentHour(true);
                 reservationRepository.save(reservation);
                 notificationRepository.save(notification);
             }
             // 24시간 전 예약에 대한 알림 생성
             for (Reservations reservation : twentyFourHourReservations) {
-                if(reservation.isNotificationSent()) continue;
+                if(reservation.isNotificationSentDay()) continue;
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)
                         .isRead(false)
                         .build();
-                reservation.setNotificationSent(true);
+                reservation.setNotificationSentDay(true);
+                reservationRepository.save(reservation);
                 notificationRepository.save(notification);
             }
         }

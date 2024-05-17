@@ -204,7 +204,7 @@ public class ReservationService {
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
 
-//        sendNotification(user, reservation);
+        sendNotification(user, reservation);
     }
 
     //official이 올린 item 예약
@@ -252,7 +252,7 @@ public class ReservationService {
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
 
-//        sendNotification(user, reservation);
+        sendNotification(user, reservation);
     }
 
     @Transactional

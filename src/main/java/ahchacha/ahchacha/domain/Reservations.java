@@ -28,7 +28,8 @@ public class Reservations extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private boolean notificationSent;
+    private boolean notificationSentHour;
+    private boolean notificationSentDay;
 
     private String title;
     private String itemUserNickName; //아이템 등록한사람 이름
