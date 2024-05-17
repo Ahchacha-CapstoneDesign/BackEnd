@@ -92,6 +92,7 @@ public class ItemController {
     public ResponseEntity<ItemDto.ItemResponseDto> updateItem(
             @PathVariable Long itemId,
             @RequestPart(value = "file", required = false) List<MultipartFile> files,
+            @RequestParam(value = "file2", required = false) List<String> files2,
             @RequestParam(name = "title") String title,
             @RequestParam(name = "pricePerHour") int pricePerHour,
             @RequestParam(name = "canBorrowDateTime") LocalDateTime canBorrowDateTime,
@@ -137,7 +138,7 @@ public class ItemController {
                 .category(category)
                 .build();
 
-        ItemDto.ItemResponseDto itemResponseDto = itemService.updateItem(itemId, itemRequestDto, files, session);
+        ItemDto.ItemResponseDto itemResponseDto = itemService.updateItem(itemId, itemRequestDto, files, files2, session);
         return new ResponseEntity<>(itemResponseDto, HttpStatus.OK);
     }
 
