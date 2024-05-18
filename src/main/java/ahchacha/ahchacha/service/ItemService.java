@@ -224,14 +224,21 @@ public class ItemService {
         return ItemDto.toDtoPage(itemPage);
     }
 
-    public Page<ItemDto.ItemResponseDto> searchItemByTitle(String title,int page) {
+    public Page<ItemDto.ItemResponseDto> searchItemByKeyword(String keyword,int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
         Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
 
+        Category category;
+        try {
+            category = Category.valueOf(keyword.toUpperCase());
+        } catch (IllegalArgumentException e){
+            category = null;
+        }
+
         Page<Item> itemPage;
 
-        itemPage = itemRepository.findByTitleContaining(title, pageable);
+        itemPage = itemRepository.findByTitleContainingOrCategory(keyword, category, pageable);
 
         return ItemDto.toDtoPage(itemPage);
     }

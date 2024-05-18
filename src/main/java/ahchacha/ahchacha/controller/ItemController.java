@@ -250,7 +250,7 @@ public class ItemController {
     public ResponseEntity<Page<ItemDto.ItemResponseDto>> searchItemByTitle(@RequestParam(value = "title") String title,
                                                                            @RequestParam(value = "page", defaultValue = "1") int page) {
 
-        Page<ItemDto.ItemResponseDto> itemPages = itemService.searchItemByTitle(title, page);
+        Page<ItemDto.ItemResponseDto> itemPages = itemService.searchItemByKeyword(title, page);
         return ResponseEntity.ok(itemPages);
     }
 
