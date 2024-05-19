@@ -48,3 +48,13 @@ docker-compose.yml
 
 # Source code
 !src/
+
+!gradle/
+!build/
+!build.gradle
+!gradlew
+!gradlew.bat
+!settings.gradle
+
+# Source code
+!src/
