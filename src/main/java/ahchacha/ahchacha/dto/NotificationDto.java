@@ -1,5 +1,6 @@
 package ahchacha.ahchacha.dto;
 
+import ahchacha.ahchacha.domain.Notification;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class NotificationDto {
         private String comment;
         private Long communityId;
         private String communityTitle;
+        private String itemTitle;
         private boolean isRead;
         private LocalDateTime createdAt;
     }

@@ -1,8 +1,9 @@
 package ahchacha.ahchacha.dto;
 
-import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.Reservations;
+import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
+import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
@@ -36,6 +37,7 @@ public class ReservationDto {
         private String userName;
         private String userDefaultProfile;
 
+        private Long itemId;
         private Long itemUserId;
         private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
         private String itemUserNickName;
@@ -47,6 +49,9 @@ public class ReservationDto {
 
         private int totalPrice; // 총금액
         private RentingStatus rentingStatus;
+
+        private ToRenterWrittenStatus toRenterWrittenStatus; //리뷰 쓴지(YES) 안쓴지(NO)
+        private ToOwnerWrittenStatus toOwnerWrittenStatus;
 
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -64,6 +69,7 @@ public class ReservationDto {
                     .userName(reservations.getUserName())
                     .userDefaultProfile(reservations.getUserDefaultProfile())
 
+                    .itemId(reservations.getItem().getId())
                     .itemUserId(reservations.getItemUserId())
                     .itemRegisterDefaultProfile(reservations.getItemRegisterDefaultProfile())
                     .itemUserNickName(reservations.getItemUserNickName())
@@ -76,6 +82,9 @@ public class ReservationDto {
 
                     .totalPrice(reservations.getTotalPrice())
                     .rentingStatus(reservations.getRentingStatus())
+
+                    .toRenterWrittenStatus(reservations.getToRenterWrittenStatus())
+                    .toOwnerWrittenStatus(reservations.getToOwnerWrittenStatus())
 
                     .createdAt(reservations.getCreatedAt())
                     .updatedAt(reservations.getUpdatedAt())

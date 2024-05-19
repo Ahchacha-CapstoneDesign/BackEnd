@@ -44,7 +44,7 @@ public class HeartService {
         community.setLikeCount(community.getLikeCount() + 1 );
         communityRepository.save(community);
 
-//        sendNotification(heart.getCommunity().getUser(), heart);
+        sendNotification(heart.getCommunity().getUser(), heart);
 
         return HeartDto.CommunityLikeResponseDto.toDtoFromCommunity(heart);
     }

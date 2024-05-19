@@ -1,22 +1,27 @@
 package ahchacha.ahchacha.service;
 
 import ahchacha.ahchacha.domain.Item;
+import ahchacha.ahchacha.domain.Notification;
 import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
 import ahchacha.ahchacha.domain.common.enums.Reservation;
-import ahchacha.ahchacha.dto.ItemDto;
+import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
 import ahchacha.ahchacha.dto.ReservationDto;
 import ahchacha.ahchacha.repository.ItemRepository;
+import ahchacha.ahchacha.repository.NotificationRepository;
 import ahchacha.ahchacha.repository.ReservationRepository;
 import ahchacha.ahchacha.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +38,7 @@ public class ReservationService {
     private ItemRepository itemRepository;
     private UserRepository userRepository;
     private ReservationRepository reservationRepository;
+    private NotificationRepository notificationRepository;
 
     @Transactional
     public Page<ReservationDto.ReservationResponseDto> getAllItemsInMyPage(int page, User user) { //내가 대여한 모든 아이템
@@ -188,11 +194,17 @@ public class ReservationService {
 
                 .user(user) //대여하는 사람의 학번
                 .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
+
+                .toRenterWrittenStatus(ToRenterWrittenStatus.NONWRITTEN) //리뷰 안쓴상태
+                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NONWRITTEN)
+
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정 = 예약불가
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
+
+        sendNotification(user, reservation);
     }
 
     //official이 올린 item 예약
@@ -230,11 +242,17 @@ public class ReservationService {
 //                .imageUrls(Collections.singletonList(imageUrl))
                 .imageUrls(imageUrl != null ? Collections.singletonList(imageUrl) : null)
                 .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
+
+                .toRenterWrittenStatus(ToRenterWrittenStatus.NONWRITTEN) //리뷰 안쓴상태
+                .toOwnerWrittenStatus(ToOwnerWrittenStatus.NONWRITTEN)
+
                 .build();
 
         item.setReservation(Reservation.NO); // 예약 가능 상태를 NO로 설정
         item.setRentingStatus(RentingStatus.RESERVED); // 예약완료
         reservationRepository.save(reservation);
+
+        sendNotification(user, reservation);
     }
 
     @Transactional
@@ -267,5 +285,15 @@ public class ReservationService {
         item.setReservation(Reservation.YES);
 
         reservationRepository.delete(reservation);
+    }
+
+    private void sendNotification(User user, Reservations reservations) {
+        Notification notification = Notification.builder()
+                .user(user)
+                .reservations(reservations)
+                .isRead(false)  // 초기에 알림은 읽지 않음
+                .build();
+
+        notificationRepository.save(notification);
     }
 }

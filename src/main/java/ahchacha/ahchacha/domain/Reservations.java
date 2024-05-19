@@ -1,8 +1,11 @@
 package ahchacha.ahchacha.domain;
 
 import ahchacha.ahchacha.domain.common.BaseEntity;
+import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
 import ahchacha.ahchacha.domain.common.enums.RentingStatus;
+import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,12 +20,16 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Reservations extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private boolean notificationSentHour;
+    private boolean notificationSentDay;
 
     private String title;
     private String itemUserNickName; //아이템 등록한사람 이름
@@ -50,6 +57,9 @@ public class Reservations extends BaseEntity {
     private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
     private String userDefaultProfile; //아이템 예약하는사람 프사
 
+    private ToRenterWrittenStatus toRenterWrittenStatus; //리뷰 쓴지(YES) 안쓴지(NO)
+    private ToOwnerWrittenStatus toOwnerWrittenStatus;
+
     @ElementCollection
     @CollectionTable(name = "reservations_images", joinColumns = @JoinColumn(name = "reservations_id"))
     @Column(name = "image_url")
@@ -69,4 +79,8 @@ public class Reservations extends BaseEntity {
     @OneToMany(mappedBy = "reservations", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reservations", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Notification> notifications = new ArrayList<>();
 }

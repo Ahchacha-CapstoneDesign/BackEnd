@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 public interface ReservationRepository extends JpaRepository<Reservations, Long> {
     Page<Reservations> findByUser(User user, Pageable pageable);
 
@@ -17,4 +20,6 @@ public interface ReservationRepository extends JpaRepository<Reservations, Long>
     Page<Reservations> findByItemUserId(Long itemUserId, Pageable pageable);
 
     Page<Reservations> findByItemUserIdAndRentingStatus(Long itemUserId, RentingStatus rentingStatus, Pageable pageable);
+
+    List<Reservations> findByUserAndReturnTimeBetween(User user, LocalDateTime start, LocalDateTime end);
 }

@@ -87,8 +87,9 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemDto.ItemResponseDto updateItem(Long itemId, ItemDto.ItemRequestDto itemDto, List<MultipartFile> files, HttpSession session) {
+    public ItemDto.ItemResponseDto updateItem(Long itemId, ItemDto.ItemRequestDto itemDto, List<MultipartFile> files, List<String> files2,HttpSession session) {
         User user = (User) session.getAttribute("user");
+        List<String> pictureUrls = new ArrayList<>();
 
         // 아이템 ID로 아이템 조회
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
@@ -98,7 +99,11 @@ public class ItemService {
             throw new IllegalArgumentException("You do not have permission to update this item.");
         }
 
-        List<String> pictureUrls = new ArrayList<>();
+        if(files2!=null&&!files2.isEmpty()){
+            for(String file:files2){
+                pictureUrls.add(file);
+            }}
+
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 String uuid = UUID.randomUUID().toString();
@@ -110,6 +115,8 @@ public class ItemService {
                 System.out.println("s3 url(클릭 시 브라우저에 사진 뜨는지 확인): " + pictureUrl);
             }
         }
+
+
 
         item.setTitle(itemDto.getTitle());
         item.setPricePerHour(itemDto.getPricePerHour());
@@ -217,14 +224,21 @@ public class ItemService {
         return ItemDto.toDtoPage(itemPage);
     }
 
-    public Page<ItemDto.ItemResponseDto> searchItemByTitle(String title,int page) {
+    public Page<ItemDto.ItemResponseDto> searchItemByKeyword(String keyword,int page) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createdAt"));
         Pageable pageable = PageRequest.of(page - 1, 1000, Sort.by(sorts));
 
+        Category category;
+        try {
+            category = Category.valueOf(keyword.toUpperCase());
+        } catch (IllegalArgumentException e){
+            category = null;
+        }
+
         Page<Item> itemPage;
 
-        itemPage = itemRepository.findByTitleContaining(title, pageable);
+        itemPage = itemRepository.findByTitleContainingOrCategory(keyword, category, pageable);
 
         return ItemDto.toDtoPage(itemPage);
     }
