@@ -44,7 +44,7 @@ public class NotificationService {
                                 .commentId(notification.getComment().getId())
                                 .comment(notification.getComment().getContent())
                                 .communityId(notification.getComment().getCommunity().getId())
-                                .communityTitle(null)
+                                .communityTitle(notification.getComment().getCommunity().getTitle())
                                 .itemTitle(null)
                                 .createdAt(notification.getCreatedAt());
                     } else if (notification.getHeart() != null) {
