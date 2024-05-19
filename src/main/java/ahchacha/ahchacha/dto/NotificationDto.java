@@ -1,6 +1,7 @@
 package ahchacha.ahchacha.dto;
 
 import ahchacha.ahchacha.domain.Notification;
+import ahchacha.ahchacha.domain.common.enums.NotificationType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
@@ -21,5 +22,6 @@ public class NotificationDto {
         private String itemTitle;
         private boolean isRead;
         private LocalDateTime createdAt;
+        private NotificationType notificationType;
     }
 }

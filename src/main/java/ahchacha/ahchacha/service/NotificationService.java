@@ -3,6 +3,7 @@ package ahchacha.ahchacha.service;
 import ahchacha.ahchacha.domain.Notification;
 import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.domain.common.enums.NotificationType;
 import ahchacha.ahchacha.dto.NotificationDto;
 import ahchacha.ahchacha.repository.NotificationRepository;
 import ahchacha.ahchacha.repository.ReservationRepository;
@@ -34,6 +35,7 @@ public class NotificationService {
                     NotificationDto.NotificationResponseDto.NotificationResponseDtoBuilder builder =
                             NotificationDto.NotificationResponseDto.builder()
                                     .id(notification.getId())
+                                    .notificationType(notification.getNotificationType())
                                     .isRead(notification.isRead());
 
                     if (notification.getComment() != null) {
@@ -94,6 +96,7 @@ public class NotificationService {
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)
+                        .notificationType(NotificationType.RETURN_ONE_HOUR)
                         .isRead(false)
                         .build();
                 reservation.setNotificationSentHour(true);
@@ -106,6 +109,7 @@ public class NotificationService {
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)
+                        .notificationType(NotificationType.RETURN_ONE_DAY)
                         .isRead(false)
                         .build();
                 reservation.setNotificationSentDay(true);
