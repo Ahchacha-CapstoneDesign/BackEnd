@@ -202,6 +202,7 @@ public class ReservationService {
         reservationRepository.save(reservation);
 
         sendNotification(user, reservation);
+        sendNotification(item.getUser(),reservation);
     }
 
     //official이 올린 item 예약
@@ -250,6 +251,7 @@ public class ReservationService {
         reservationRepository.save(reservation);
 
         sendNotification(user, reservation);
+        sendNotification(item.getUser(),reservation);
     }
 
     @Transactional
