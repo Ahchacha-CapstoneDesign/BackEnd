@@ -1,6 +1,7 @@
 package ahchacha.ahchacha.domain;
 
 
+import ahchacha.ahchacha.domain.common.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,12 +15,10 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-//@DynamicUpdate
-//@DynamicInsert
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Authentication {
+public class Authentication extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +28,12 @@ public class Authentication {
     @Column(name = "authentication_image_url")
     private List<String> authenticationImageUrls; //아이템 이미지
 
+    private String name;
+    private String track1;
+    private String track2;
+    private String phoneNumber;
+    private String grade;
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
