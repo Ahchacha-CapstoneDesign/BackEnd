@@ -4,6 +4,7 @@ package ahchacha.ahchacha.service;
 import ahchacha.ahchacha.aws.AmazonS3Manager;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
+import ahchacha.ahchacha.domain.common.enums.AuthenticationValue;
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
 import ahchacha.ahchacha.dto.UserDto;
 import ahchacha.ahchacha.repository.UserRepository;
@@ -199,6 +200,7 @@ public class UserService {
                 .phoneNumber(phoneNumber)
                 .grade(grade)
                 .status(status)
+                .authenticationValue(AuthenticationValue.NONE)
                 .build();
     }
 

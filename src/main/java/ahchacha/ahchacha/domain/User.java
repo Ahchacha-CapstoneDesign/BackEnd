@@ -1,5 +1,6 @@
 package ahchacha.ahchacha.domain;
 
+import ahchacha.ahchacha.domain.common.enums.AuthenticationValue;
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -46,6 +47,9 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial; //공공 로그인 or 개인 로그인
+
+    @Enumerated(EnumType.STRING)
+    private AuthenticationValue authenticationValue = AuthenticationValue.NONE; //개인, 오피셜까지 가능, 관리자까지 가능
 
     @Column(name = "default_profile")
     private String defaultProfile; //프로필사진
