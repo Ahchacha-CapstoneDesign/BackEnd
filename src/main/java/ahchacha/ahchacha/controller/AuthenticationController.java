@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -48,5 +49,14 @@ public class AuthenticationController {
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Operation(summary = "제출된 인증내역 상세조회")
+    @GetMapping("/{authenticationId}")
+    public ResponseEntity<AuthenticationDto.AuthenticationResponseDto> getAuthenticationById(@PathVariable Long authenticationId, HttpSession session) throws IllegalAccessException {
+        Optional<AuthenticationDto.AuthenticationResponseDto> optionalAuthenticationDto = authenticationService.getAuthenticationById(authenticationId, session);
+
+        return optionalAuthenticationDto.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

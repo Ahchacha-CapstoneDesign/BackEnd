@@ -2,11 +2,13 @@ package ahchacha.ahchacha.service;
 
 import ahchacha.ahchacha.aws.AmazonS3Manager;
 import ahchacha.ahchacha.domain.Authentication;
+import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
 import ahchacha.ahchacha.domain.common.enums.AuthenticationValue;
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
 import ahchacha.ahchacha.dto.AuthenticationDto;
+import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.repository.AuthenticationRepository;
 import ahchacha.ahchacha.repository.UserRepository;
 import ahchacha.ahchacha.repository.UuidRepository;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -96,5 +99,17 @@ public class AuthenticationService {
 
         user.setAuthenticationValue(authenticationValue);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public Optional<AuthenticationDto.AuthenticationResponseDto> getAuthenticationById(Long id, HttpSession session) throws IllegalAccessException {
+        User admin = (User) session.getAttribute("user");
+        if (admin.getPersonOrOfficial() != PersonOrOfficial.ADMIN) {
+            throw new IllegalAccessException("관리자만 접근 가능합니다.");
+        }
+
+        Optional<Authentication> optionalAuthentication = authenticationRepository.findById(id);
+
+        return optionalAuthentication.map(AuthenticationDto.AuthenticationResponseDto::toDto);
     }
 }
