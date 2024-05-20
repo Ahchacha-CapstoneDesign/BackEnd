@@ -4,9 +4,11 @@ import ahchacha.ahchacha.aws.AmazonS3Manager;
 import ahchacha.ahchacha.domain.Authentication;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
+import ahchacha.ahchacha.domain.common.enums.AuthenticationValue;
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
 import ahchacha.ahchacha.dto.AuthenticationDto;
 import ahchacha.ahchacha.repository.AuthenticationRepository;
+import ahchacha.ahchacha.repository.UserRepository;
 import ahchacha.ahchacha.repository.UuidRepository;
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,7 @@ public class AuthenticationService {
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
     private final AuthenticationRepository authenticationRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public AuthenticationDto.AuthenticationResponseDto createAuthentication(List<MultipartFile> files,
@@ -79,5 +82,19 @@ public class AuthenticationService {
         Pageable pageable = PageRequest.of(page-1, 1000, Sort.by(sorts));
         Page<Authentication> authenticationPage = authenticationRepository.findAll(pageable);
         return AuthenticationDto.toDtoPage(authenticationPage);
+    }
+
+    @Transactional
+    public void updateAuthenticationValue(Long userId, AuthenticationValue authenticationValue, HttpSession session) throws IllegalAccessException {
+        User admin = (User) session.getAttribute("user");
+        if (admin.getPersonOrOfficial() != PersonOrOfficial.ADMIN) {
+            throw new IllegalAccessException("관리자만 접근 가능합니다.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        user.setAuthenticationValue(authenticationValue);
+        userRepository.save(user);
     }
 }

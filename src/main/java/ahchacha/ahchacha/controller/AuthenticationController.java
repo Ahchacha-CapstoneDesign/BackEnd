@@ -1,5 +1,6 @@
 package ahchacha.ahchacha.controller;
 
+import ahchacha.ahchacha.domain.common.enums.AuthenticationValue;
 import ahchacha.ahchacha.dto.AuthenticationDto;
 import ahchacha.ahchacha.dto.ItemDto;
 import ahchacha.ahchacha.service.AuthenticationService;
@@ -34,5 +35,18 @@ public class AuthenticationController {
     public ResponseEntity<Page<AuthenticationDto.AuthenticationResponseDto>> getAllAuthentication(@RequestParam(value = "page", defaultValue = "1")int page, HttpSession session) throws IllegalAccessException {
         Page<AuthenticationDto.AuthenticationResponseDto> authenticationResponseDtoPage = authenticationService.getAllAuthentication(page, session);
         return new ResponseEntity<>(authenticationResponseDtoPage, HttpStatus.OK);
+    }
+
+    @Operation(summary = "사용자의 인증 값을 변경")
+    @PostMapping("/updateAuthenticationValue/{userId}")
+    public ResponseEntity<Void> updateAuthenticationValue(@PathVariable Long userId, @RequestParam AuthenticationValue authenticationValue, HttpSession session) {
+        try {
+            authenticationService.updateAuthenticationValue(userId, authenticationValue, session);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalAccessException e) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
