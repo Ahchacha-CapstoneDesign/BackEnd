@@ -35,6 +35,8 @@ public class Authentication extends BaseEntity {
     private String grade;
     private String status;
 
+    private Boolean isCheck = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonBackReference
