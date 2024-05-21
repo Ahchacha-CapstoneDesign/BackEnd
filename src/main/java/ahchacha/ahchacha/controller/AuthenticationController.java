@@ -23,11 +23,17 @@ import java.util.Optional;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @Operation(summary = "OFFICIAL 인증 사진 제출")
+    @Operation(summary = "OFFICIAL 인증 사진 및 소속 이름 제출")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<AuthenticationDto.AuthenticationResponseDto> create(@RequestPart(value = "file", required = false) List<MultipartFile> files,
+                                                                              @RequestParam(name = "officialName") String officialName,
                                                                     HttpSession session){
-        AuthenticationDto.AuthenticationResponseDto authenticationResponseDto = authenticationService.createAuthentication(files, session);
+
+        AuthenticationDto.AuthenticationRequestDto authenticationRequestDto = AuthenticationDto.AuthenticationRequestDto.builder()
+                .officialName(officialName)
+                .build();
+
+        AuthenticationDto.AuthenticationResponseDto authenticationResponseDto = authenticationService.createAuthentication(authenticationRequestDto, files, session);
         return new ResponseEntity<>(authenticationResponseDto, HttpStatus.CREATED);
     }
 
