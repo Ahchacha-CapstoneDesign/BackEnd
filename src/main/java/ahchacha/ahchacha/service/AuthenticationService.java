@@ -65,7 +65,7 @@ public class AuthenticationService {
                 .status(user.getStatus())
 
                 .authenticationImageUrls(pictureUrls)
-
+                .isCheck(false)
                 .build();
 
         Authentication createdAuthentication = authenticationRepository.save(authentication);
@@ -99,6 +99,17 @@ public class AuthenticationService {
 
         user.setAuthenticationValue(authenticationValue);
         userRepository.save(user);
+
+        List<Authentication> authentications = authenticationRepository.findByUserId(userId);
+        if (authentications.isEmpty()) {
+            throw new IllegalArgumentException("인증 정보를 찾을 수 없습니다.");
+        }
+
+        for (Authentication authentication : authentications) {
+            authentication.setIsCheck(true);
+        }
+
+        authenticationRepository.saveAll(authentications);
     }
 
     @Transactional

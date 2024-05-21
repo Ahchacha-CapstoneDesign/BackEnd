@@ -33,6 +33,8 @@ public class AuthenticationDto {
         private String grade;
         private String status;
 
+        private Boolean isCheck;
+
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
@@ -48,6 +50,8 @@ public class AuthenticationDto {
                     .phoneNumber(authentication.getUser().getPhoneNumber())
                     .grade(authentication.getUser().getGrade())
                     .status(authentication.getUser().getStatus())
+
+                    .isCheck(authentication.getIsCheck())
 
                     .createdAt(authentication.getCreatedAt())
                     .updatedAt(authentication.getUpdatedAt())
