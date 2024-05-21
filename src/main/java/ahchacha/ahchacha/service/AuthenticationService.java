@@ -99,8 +99,7 @@ public class AuthenticationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        user.setAuthenticationValue(authenticationValue);
-        userRepository.save(user);
+
 
         List<Authentication> authentications = authenticationRepository.findByUserId(userId);
         if (authentications.isEmpty()) {
@@ -109,8 +108,11 @@ public class AuthenticationService {
 
         for (Authentication authentication : authentications) {
             authentication.setIsCheck(true);
+            user.setOfficialName(authentication.getOfficialName());
         }
 
+        user.setAuthenticationValue(authenticationValue);
+        userRepository.save(user);
         authenticationRepository.saveAll(authentications);
     }
 
