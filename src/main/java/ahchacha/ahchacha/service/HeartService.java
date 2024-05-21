@@ -1,6 +1,7 @@
 package ahchacha.ahchacha.service;
 
 import ahchacha.ahchacha.domain.*;
+import ahchacha.ahchacha.domain.common.enums.NotificationType;
 import ahchacha.ahchacha.dto.HeartDto;
 import ahchacha.ahchacha.repository.*;
 import jakarta.servlet.http.HttpSession;
@@ -124,6 +125,7 @@ public class HeartService {
         Notification notification = Notification.builder()
                 .user(user)
                 .heart(heart)
+                .notificationType(NotificationType.HEART)
                 .isRead(false)  // 초기에 알림은 읽지 않음
                 .build();
 

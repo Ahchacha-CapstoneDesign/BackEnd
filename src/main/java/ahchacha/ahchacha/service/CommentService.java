@@ -4,6 +4,7 @@ import ahchacha.ahchacha.domain.Comment;
 import ahchacha.ahchacha.domain.Community;
 import ahchacha.ahchacha.domain.Notification;
 import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.domain.common.enums.NotificationType;
 import ahchacha.ahchacha.dto.CommentDto;
 import ahchacha.ahchacha.repository.CommentRepository;
 import ahchacha.ahchacha.repository.CommunityRepository;
@@ -129,6 +130,7 @@ public class CommentService {
         Notification notification = Notification.builder()
                 .user(user)
                 .comment(comment)
+                .notificationType(NotificationType.COMMENT)
                 .isRead(false)  // 초기에 알림은 읽지 않음
                 .build();
 

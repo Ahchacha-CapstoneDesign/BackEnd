@@ -4,10 +4,7 @@ import ahchacha.ahchacha.domain.Item;
 import ahchacha.ahchacha.domain.Notification;
 import ahchacha.ahchacha.domain.Reservations;
 import ahchacha.ahchacha.domain.User;
-import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
-import ahchacha.ahchacha.domain.common.enums.RentingStatus;
-import ahchacha.ahchacha.domain.common.enums.Reservation;
-import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
+import ahchacha.ahchacha.domain.common.enums.*;
 import ahchacha.ahchacha.dto.ReservationDto;
 import ahchacha.ahchacha.repository.ItemRepository;
 import ahchacha.ahchacha.repository.NotificationRepository;
@@ -205,6 +202,7 @@ public class ReservationService {
         reservationRepository.save(reservation);
 
         sendNotification(user, reservation);
+        sendNotification(item.getUser(),reservation);
     }
 
     //official이 올린 item 예약
@@ -253,6 +251,7 @@ public class ReservationService {
         reservationRepository.save(reservation);
 
         sendNotification(user, reservation);
+        sendNotification(item.getUser(),reservation);
     }
 
     @Transactional
@@ -291,6 +290,7 @@ public class ReservationService {
         Notification notification = Notification.builder()
                 .user(user)
                 .reservations(reservations)
+                .notificationType(NotificationType.RESERVATION)
                 .isRead(false)  // 초기에 알림은 읽지 않음
                 .build();
 

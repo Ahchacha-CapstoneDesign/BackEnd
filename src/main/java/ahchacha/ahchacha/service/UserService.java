@@ -4,6 +4,7 @@ package ahchacha.ahchacha.service;
 import ahchacha.ahchacha.aws.AmazonS3Manager;
 import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.Uuid;
+import ahchacha.ahchacha.domain.common.enums.AuthenticationValue;
 import ahchacha.ahchacha.domain.common.enums.PersonOrOfficial;
 import ahchacha.ahchacha.dto.UserDto;
 import ahchacha.ahchacha.repository.UserRepository;
@@ -199,6 +200,7 @@ public class UserService {
                 .phoneNumber(phoneNumber)
                 .grade(grade)
                 .status(status)
+                .authenticationValue(AuthenticationValue.NONE)
                 .build();
     }
 
@@ -248,6 +250,25 @@ public class UserService {
         if (user == null) {
             throw new IllegalStateException("로그인이 필요합니다.");
         }
+
+        switch (user.getAuthenticationValue()) {
+            case NONE:
+                if (userType != PersonOrOfficial.PERSON) {
+                    throw new IllegalStateException("이 사용자는 PERSON만 가능합니다.");
+                }
+                break;
+            case CANOFFICIAL:
+                if (userType != PersonOrOfficial.PERSON && userType != PersonOrOfficial.OFFICIAL) {
+                    throw new IllegalStateException("이 사용자는 ADMIN으로 변경할 권한이 없습니다.");
+                }
+                break;
+            case CANADMIN:
+                // CANADMIN인 경우 모든 유형으로 변경 가능
+                break;
+            default:
+                throw new IllegalStateException("잘못된 인증 값입니다.");
+        }
+
         user.setPersonOrOfficial(userType);
         userRepository.save(user);
     }
