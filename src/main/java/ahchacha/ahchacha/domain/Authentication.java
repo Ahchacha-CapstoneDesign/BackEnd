@@ -23,6 +23,8 @@ public class Authentication extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String officialName; //학생회 등 이름
+
     @ElementCollection
     @CollectionTable(name = "authentication_images", joinColumns = @JoinColumn(name = "authentication_id"))
     @Column(name = "authentication_image_url")

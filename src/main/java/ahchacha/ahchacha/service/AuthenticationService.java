@@ -37,7 +37,8 @@ public class AuthenticationService {
     private final UserRepository userRepository;
 
     @Transactional
-    public AuthenticationDto.AuthenticationResponseDto createAuthentication(List<MultipartFile> files,
+    public AuthenticationDto.AuthenticationResponseDto createAuthentication(AuthenticationDto.AuthenticationRequestDto authenticationDto,
+                                                                            List<MultipartFile> files,
                                                                   HttpSession session) {
         User user = (User) session.getAttribute("user");
 
@@ -65,6 +66,7 @@ public class AuthenticationService {
                 .status(user.getStatus())
 
                 .authenticationImageUrls(pictureUrls)
+                .officialName(authenticationDto.getOfficialName())
                 .isCheck(false)
                 .build();
 

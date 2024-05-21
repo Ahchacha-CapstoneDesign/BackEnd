@@ -16,6 +16,7 @@ public class AuthenticationDto {
     @Builder
     public static class AuthenticationRequestDto{
         private List<String> authenticationImageUrls;
+        private String officialName;
     }
 
     @Getter
@@ -25,6 +26,7 @@ public class AuthenticationDto {
         private Long userId;
         private Long id;
         private List<String> authenticationImageUrls;
+        private String officialName;
 
         private String name;
         private String track1;
@@ -43,6 +45,7 @@ public class AuthenticationDto {
                     .userId(authentication.getUser().getId())
                     .id(authentication.getId())
                     .authenticationImageUrls(authentication.getAuthenticationImageUrls())
+                    .officialName(authentication.getOfficialName())
 
                     .name(authentication.getUser().getName())
                     .track1(authentication.getUser().getTrack1())
