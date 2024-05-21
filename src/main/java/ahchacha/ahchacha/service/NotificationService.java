@@ -118,4 +118,11 @@ public class NotificationService {
             }
         }
     }
+
+    public void markAsRead(Long notificationId) {
+        Notification notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid notification ID"));
+        notification.setRead(true);
+        notificationRepository.save(notification);
+    }
 }
