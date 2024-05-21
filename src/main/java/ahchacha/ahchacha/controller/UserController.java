@@ -32,14 +32,33 @@ public class UserController {
             User user = userService.login(loginRequestDto, session);
 
             // 사용자의 로그인 권한을 검사하고 personOrOfficial 값을 업데이트
+//            if (loginRequestDto.getPersonOrOfficial() == PersonOrOfficial.OFFICIAL) {
+//                if (user.getAuthenticationValue() == AuthenticationValue.CANOFFICIAL) {
+//                    user.setPersonOrOfficial(PersonOrOfficial.OFFICIAL);
+//                } else {
+//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("공식 사용자 인증이 필요합니다.");
+//                }
+//            } else {
+//                user.setPersonOrOfficial(PersonOrOfficial.PERSON);
+//            }
             if (loginRequestDto.getPersonOrOfficial() == PersonOrOfficial.OFFICIAL) {
-                if (user.getAuthenticationValue() == AuthenticationValue.CANOFFICIAL) {
+                if (user.getAuthenticationValue() == AuthenticationValue.CANOFFICIAL || user.getAuthenticationValue() == AuthenticationValue.CANADMIN) {
                     user.setPersonOrOfficial(PersonOrOfficial.OFFICIAL);
                 } else {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body("공식 사용자 인증이 필요합니다.");
                 }
-            } else {
+            }
+            else if (loginRequestDto.getPersonOrOfficial() == PersonOrOfficial.ADMIN) {
+                if (user.getAuthenticationValue() == AuthenticationValue.CANADMIN) {
+                    user.setPersonOrOfficial(PersonOrOfficial.ADMIN);
+                } else {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).body("관리자 인증이 필요합니다.");
+                }
+            }
+            else if (loginRequestDto.getPersonOrOfficial() == PersonOrOfficial.PERSON) {
                 user.setPersonOrOfficial(PersonOrOfficial.PERSON);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 권한 요청입니다.");
             }
 
             userRepository.save(user); // 변경된 사용자 정보를 저장
@@ -48,15 +67,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Login failed: " + e.getMessage());
         }
     }
-
-//    @PostMapping("/login")
-//    public User login(@RequestBody UserDto.LoginRequestDto loginRequestDto, HttpSession session) {
-//        try {
-//            return userService.login(loginRequestDto, session);
-//        } catch (IOException e) {
-//            throw new RuntimeException("Login failed", e);
-//        }
-//    }
 
     @Operation(summary = "로그아웃")
     @GetMapping("/logout")
