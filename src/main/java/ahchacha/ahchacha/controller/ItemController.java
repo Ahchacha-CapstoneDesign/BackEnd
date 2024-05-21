@@ -270,4 +270,11 @@ public class ItemController {
         itemService.deleteItem(itemId, user);
         return ResponseEntity.ok().build();
     }
+    @Operation(summary = "메인페이지1")
+    @GetMapping("/top-reservations")
+    public ResponseEntity<List<ItemDto.ItemResponseDto>> getTopItemsByTopCategories() {
+        List<ItemDto.ItemResponseDto> topItems = itemService.getTopItemsByTopCategories();
+        return ResponseEntity.ok(topItems);
+    }
+
 }

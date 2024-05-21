@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -283,5 +284,25 @@ public class ItemService {
         }
 
         itemRepository.deleteById(itemId);
+    }
+    public List<ItemDto.ItemResponseDto> getTopItemsByTopCategories() {
+        List<Object[]> topCategories = reservationRepository.findTopCategoriesByReservationCount();
+        List<Category> categories = topCategories.stream()
+                .limit(10)
+                .map(result -> (Category) result[0])
+                .collect(Collectors.toList());
+
+        List<Item> topItems = itemRepository.findTopItemsByCategories(categories);
+
+        // Item 객체들을 ItemResponseDto 객체로 변환
+        List<ItemDto.ItemResponseDto> topItemsResponseDtos = topItems.stream()
+                .collect(Collectors.groupingBy(Item::getCategory))
+                .values()
+                .stream()
+                .map(items -> items.get(0)) // 각 카테고리에서 top item만 선택
+                .map(ItemDto.ItemResponseDto::toDto) // Item 객체를 ItemResponseDto 객체로 변환
+                .collect(Collectors.toList());
+
+        return topItemsResponseDtos;
     }
 }

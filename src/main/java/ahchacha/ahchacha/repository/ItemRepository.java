@@ -34,4 +34,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query("SELECT i FROM Item i WHERE i.title LIKE %:keyword% OR i.category = :category")
     Page<Item> findByTitleContainingOrCategory(@Param("keyword") String keyword, @Param("category") Category category, Pageable pageable);
+    @Query("SELECT i FROM Item i WHERE i.category IN :categories ORDER BY i.viewCount DESC")
+    List<Item> findTopItemsByCategories(List<Category> categories);
 }
