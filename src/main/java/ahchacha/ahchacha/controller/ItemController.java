@@ -169,7 +169,7 @@ public class ItemController {
     @Operation(summary = "예약완료 물품 페이징(마이페이지-등록내역)")
     @GetMapping("/rentingStatusRESERVED")
     public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReserved(HttpServletRequest request,
-                                                                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+                                                                               @RequestParam(value = "page", defaultValue = "1") int page) {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("user");
 
@@ -180,7 +180,7 @@ public class ItemController {
     @Operation(summary = "대여중 물품 페이징(마이페이지-등록내역)")
     @GetMapping("/rentingStatusRENTING")
     public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByRenting(HttpServletRequest request,
-                                                                               @RequestParam(value = "page", defaultValue = "1") int page) {
+                                                                              @RequestParam(value = "page", defaultValue = "1") int page) {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("user");
 
@@ -191,7 +191,7 @@ public class ItemController {
     @Operation(summary = "반납완료 물품 페이징(마이페이지-등록내역)")
     @GetMapping("/rentingStatusRETURNED")
     public ResponseEntity<Page<ItemDto.ItemResponseDto>> getAllItemsByReturned(HttpServletRequest request,
-                                                                              @RequestParam(value = "page", defaultValue = "1") int page) {
+                                                                               @RequestParam(value = "page", defaultValue = "1") int page) {
         HttpSession session = request.getSession();
         User currentUser = (User) session.getAttribute("user");
 
@@ -201,7 +201,7 @@ public class ItemController {
 
 
     @Operation(summary = "아이템 상세 조회", description = "{itemId} 자리에 상세 조회할 아이템 id를 전달해주세요.")
-    @GetMapping("/{itemId}")
+    @GetMapping("/{itemId:[\\d]+}")
     public ResponseEntity<ItemDto.ItemResponseDto> getItemById(@PathVariable Long itemId) {
         Optional<ItemDto.ItemResponseDto> optionalItemDto = itemService.getItemById(itemId);
 
