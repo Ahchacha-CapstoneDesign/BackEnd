@@ -22,10 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @AllArgsConstructor
 @Service
@@ -39,7 +36,7 @@ public class AuthenticationService {
     @Transactional
     public AuthenticationDto.AuthenticationResponseDto createAuthentication(AuthenticationDto.AuthenticationRequestDto authenticationDto,
                                                                             List<MultipartFile> files,
-                                                                  HttpSession session) {
+                                                                            HttpSession session) {
         User user = (User) session.getAttribute("user");
 
         //이미지 업로드
@@ -99,22 +96,31 @@ public class AuthenticationService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
-        user.setAuthenticationValue(authenticationValue);
-        userRepository.save(user);
-
         List<Authentication> authentications = authenticationRepository.findByUserId(userId);
         if (authentications.isEmpty()) {
             throw new IllegalArgumentException("인증 정보를 찾을 수 없습니다.");
         }
 
+        // 인증 정보를 반복하여 승인 상태를 업데이트
+//        for (Authentication authentication : authentications) {
+//            authentication.setIsCheck(authenticationValue == AuthenticationValue.APPROVED);
+//        }
+//
+//        // 사용자의 officialName과 인증 상태 업데이트
+//        if (authenticationValue == AuthenticationValue.APPROVED) {
+//            user.setOfficialName(authentications.get(0).getOfficialName());  // 가장 최근의 인증 정보 사용
+//        }
         for (Authentication authentication : authentications) {
             authentication.setIsCheck(true);
+            user.setOfficialName(authentication.getOfficialName());
         }
 
-        authenticationRepository.saveAll(authentications);
+        user.setAuthenticationValue(authenticationValue);  // 인증 상태 업데이트
+        userRepository.save(user);  // 사용자 정보 저장
+        authenticationRepository.saveAll(authentications);  // 인증 정보 저장
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<AuthenticationDto.AuthenticationResponseDto> getAuthenticationById(Long id, HttpSession session) throws IllegalAccessException {
         User admin = (User) session.getAttribute("user");
         if (admin.getPersonOrOfficial() != PersonOrOfficial.ADMIN) {
@@ -122,7 +128,12 @@ public class AuthenticationService {
         }
 
         Optional<Authentication> optionalAuthentication = authenticationRepository.findById(id);
-
         return optionalAuthentication.map(AuthenticationDto.AuthenticationResponseDto::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Authentication> getLatestAuthenticationByUserId(Long userId) {
+        List<Authentication> authentications = authenticationRepository.findByUserId(userId);
+        return authentications.stream().max(Comparator.comparing(Authentication::getCreatedAt));
     }
 }

@@ -51,6 +51,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private AuthenticationValue authenticationValue = AuthenticationValue.NONE; //개인, 오피셜까지 가능, 관리자까지 가능
 
+    private String officialName;
+
     @Column(name = "default_profile")
     private String defaultProfile; //프로필사진
 
