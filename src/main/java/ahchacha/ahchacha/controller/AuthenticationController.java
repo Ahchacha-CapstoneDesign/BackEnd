@@ -1,5 +1,6 @@
 package ahchacha.ahchacha.controller;
 
+import ahchacha.ahchacha.domain.User;
 import ahchacha.ahchacha.domain.common.enums.AuthenticationValue;
 import ahchacha.ahchacha.dto.AuthenticationDto;
 import ahchacha.ahchacha.dto.ItemDto;
@@ -27,7 +28,7 @@ public class AuthenticationController {
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<AuthenticationDto.AuthenticationResponseDto> create(@RequestPart(value = "file", required = false) List<MultipartFile> files,
                                                                               @RequestParam(name = "officialName") String officialName,
-                                                                    HttpSession session){
+                                                                              HttpSession session){
 
         AuthenticationDto.AuthenticationRequestDto authenticationRequestDto = AuthenticationDto.AuthenticationRequestDto.builder()
                 .officialName(officialName)
@@ -63,6 +64,14 @@ public class AuthenticationController {
         Optional<AuthenticationDto.AuthenticationResponseDto> optionalAuthenticationDto = authenticationService.getAuthenticationById(authenticationId, session);
 
         return optionalAuthenticationDto.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Boolean> getAuthenticationStatus(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        return authenticationService.getLatestAuthenticationByUserId(user.getId())
+                .map(authentication -> ResponseEntity.ok(authentication.getIsCheck()))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
