@@ -305,4 +305,43 @@ public class ItemService {
 
         return topItemsResponseDtos;
     }
+//
+//    public List<ItemDto.ItemResponseDto> getTopItemsByTopCategories(Long userId) {
+//        Pageable top6 = PageRequest.of(0, 6);
+//        List<Object[]> topCategories = reservationRepository.findTopCategoriesByUser(userId, top6);
+//
+//        List<ItemDto.ItemResponseDto> topItems = new ArrayList<>();
+//
+//        for (Object[] category : topCategories) {
+//            String categoryName = (String) category[0];
+//            Pageable top1 = PageRequest.of(0, 1);
+//            List<Item> items = itemRepository.findTopItemsByCategory(categoryName, top1);
+//            if (!items.isEmpty()) {
+//                Item item = items.get(0);
+//                topItems.add(new ItemDto.ItemResponseDto(item.getId(), item.getName(), item.getDescription()));
+//            }
+//        }
+//        return topItems;
+//    }
+
+    public List<ItemDto.ItemResponseDto> getMyTopItemsByTopCategories(User user) {
+        List<Object[]> topCategories = reservationRepository.findMyTopCategoriesByUser(user.getId());
+        List<Category> categories = topCategories.stream()
+                .limit(6)
+                .map(result -> (Category) result[0])
+                .collect(Collectors.toList());
+
+        List<Item> topItems = itemRepository.findTopItemsByCategories(categories);
+
+        // Item 객체들을 ItemResponseDto 객체로 변환
+        List<ItemDto.ItemResponseDto> MytopItemsResponseDtos = topItems.stream()
+                .collect(Collectors.groupingBy(Item::getCategory))
+                .values()
+                .stream()
+                .map(items -> items.get(0)) // 각 카테고리에서 top item만 선택
+                .map(ItemDto.ItemResponseDto::toDto) // Item 객체를 ItemResponseDto 객체로 변환
+                .collect(Collectors.toList());
+
+        return MytopItemsResponseDtos;
+    }
 }

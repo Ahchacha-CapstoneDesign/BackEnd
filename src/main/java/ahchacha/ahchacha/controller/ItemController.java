@@ -277,4 +277,14 @@ public class ItemController {
         return ResponseEntity.ok(topItems);
     }
 
+    @Operation(summary = "메인페이지3")
+    @GetMapping("/MyTop-reservations")
+    public ResponseEntity<List<ItemDto.ItemResponseDto>> getMyTopItemsByTopCategories(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("user");
+
+        List<ItemDto.ItemResponseDto> topItems = itemService.getMyTopItemsByTopCategories(currentUser);
+        return ResponseEntity.ok(topItems);
+    }
+
 }
