@@ -45,12 +45,12 @@ public class ReviewService {
                 .user(user)
 
                 .itemOwnerId(reservation.getItemUserId())
-                .ownerNickName(reservation.getItemUserNickName())
-                .ownerProfile(reservation.getItemRegisterDefaultProfile())
+//                .ownerNickName(reservation.getItemUserNickName())
+//                .ownerProfile(reservation.getItem().getUser().getDefaultProfile())
 
                 .renterUserId(reservation.getUser().getId())
-                .renterNickName(reservation.getUserNickname())
-                .renterProfile(reservation.getUserDefaultProfile())
+//                .renterNickName(reservation.getUserNickname())
+//                .renterProfile(reservation.getUser().getDefaultProfile())
 
                 .reservations(reservation)
                 .build();
@@ -80,12 +80,12 @@ public class ReviewService {
                 .user(user)
 
                 .itemOwnerId(reservation.getItemUserId())
-                .ownerNickName(reservation.getItemUserNickName())
-                .ownerProfile(reservation.getItemRegisterDefaultProfile())
+//                .ownerNickName(reservation.getItemUserNickName())
+//                .ownerProfile(reservation.getItem().getUser().getDefaultProfile())
 
                 .renterUserId(reservation.getUser().getId())
-                .renterNickName(reservation.getUserNickname())
-                .renterProfile(reservation.getUserDefaultProfile())
+//                .renterNickName(reservation.getUserNickname())
+//                .renterProfile(reservation.getUser().getDefaultProfile())
 
                 .reservations(reservation)
                 .build();

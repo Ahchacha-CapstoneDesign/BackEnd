@@ -58,12 +58,12 @@ public class ReviewDto {
                     .reviewScore(review.getReviewScore())
 
                     .itemOwnerId(review.getItemOwnerId())
-                    .ownerNickName(review.getOwnerNickName())
-                    .ownerProfile(review.getOwnerProfile())
+                    .ownerNickName(review.getReservations().getItem().getUser().getNickname())
+                    .ownerProfile(review.getReservations().getItem().getUser().getDefaultProfile())
 
                     .renterUserId(review.getRenterUserId())
-                    .renterNickName(review.getRenterNickName())
-                    .renterProfile(review.getRenterProfile())
+                    .renterNickName(review.getUser().getNickname())
+                    .renterProfile(review.getUser().getDefaultProfile())
 
                     .personType(review.getPersonType())
 

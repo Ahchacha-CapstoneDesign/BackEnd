@@ -179,13 +179,13 @@ public class ReservationService {
                 .returnTime(reservationDTO.getReturnTime())
                 .totalPrice(totalPrice)
                 .item(item)
-                .itemUserNickName(item.getUser().getNickname())
+//                .itemUserNickName(item.getUser().getNickname())
                 .itemBorrowPlace(item.getBorrowPlace())
                 .itemReturnPlace(item.getReturnPlace())
-                .userNickname(user.getNickname())
+//                .userNickname(user.getNickname())
                 .userPhoneNumber(user.getPhoneNumber())
-                .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
-                .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
+//                .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
+//                .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
 //                .imageUrls(Collections.singletonList(imageUrl))
                 .imageUrls(imageUrl != null ? Collections.singletonList(imageUrl) : null)
 
@@ -226,7 +226,7 @@ public class ReservationService {
                 .borrowTime(reservationDTO.getBorrowTime())
                 .returnTime(reservationDTO.getReturnTime())
                 .item(item)
-                .itemUserNickName(item.getUser().getNickname())
+//                .itemUserNickName(item.getUser().getNickname())
                 .itemBorrowPlace(item.getBorrowPlace())
                 .itemReturnPlace(item.getReturnPlace())
                 .user(user) //학번
@@ -235,8 +235,8 @@ public class ReservationService {
                 .userTrack1(user.getTrack1()) //트랙
                 .userGrade(user.getGrade()) //4학년
                 .userStatus(user.getStatus()) //복학
-                .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
-                .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
+//                .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
+//                .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
 //                .imageUrls(Collections.singletonList(imageUrl))
                 .imageUrls(imageUrl != null ? Collections.singletonList(imageUrl) : null)
                 .itemUserId(item.getUser().getId()) //아이템 주인의 학번(id)
