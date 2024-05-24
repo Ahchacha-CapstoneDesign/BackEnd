@@ -9,9 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
-//import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RestController;
-//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.util.HtmlUtils;
 
 
@@ -22,32 +20,10 @@ public class GreetingController {
     final UserService userService;
     final UserRepository userRepository;
 
-//    public Authentication getCurrentUserAuthentication() {
-//        return SecurityContextHolder.getContext().getAuthentication();
-//    }
-
-    // 입장
-    @MessageMapping("/enter/{itemId}")
-    @SendTo("/topic/greetings/{itemId}")
-    public ChatMessage enter(ChatMessage message, HttpSession session) {
-//        Authentication authentication = getCurrentUserAuthentication();
-        User user = (User) session.getAttribute("user");
-        return new ChatMessage(HtmlUtils.htmlEscape(user.getNickname() + "님이 입장하였습니다."));
-    }
-
-    // 퇴장
-    @MessageMapping("/exit/{itemId}")
-    @SendTo("/topic/greetings/{itemId}")
-    public ChatMessage exit(ChatMessage message, HttpSession session) throws Exception {
-//        Authentication authentication = getCurrentUserAuthentication();
-        User user = (User) session.getAttribute("user");
-        return new ChatMessage(HtmlUtils.htmlEscape(user.getNickname() + "님이 퇴장하였습니다."));
-    }
-
     // 채팅
     @MessageMapping("/chat/{itemId}")
-    @SendTo("/topic/greetings/{itemId}")
-    public ChatMessage chat(ChatMessage message, HttpSession session) throws Exception {
+    @SendTo("/queue/greetings/{itemId}")
+    public ChatMessage chat(ChatMessage message, HttpSession session){
         User user = (User) session.getAttribute("user");
 
         // 채팅 메시지 저장
