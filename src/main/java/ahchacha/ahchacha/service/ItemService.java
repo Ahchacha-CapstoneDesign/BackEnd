@@ -35,8 +35,8 @@ public class ItemService {
 
     @Transactional
     public ItemDto.ItemResponseDto createItem(ItemDto.ItemRequestDto itemDto,
-                                        List<MultipartFile> files,
-                                        HttpSession session) {
+                                              List<MultipartFile> files,
+                                              HttpSession session) {
         User user = (User) session.getAttribute("user");
 
         //이미지 업로드
@@ -296,6 +296,7 @@ public class ItemService {
 
         // Item 객체들을 ItemResponseDto 객체로 변환
         List<ItemDto.ItemResponseDto> topItemsResponseDtos = topItems.stream()
+                .filter(item -> item.getRentingStatus() == RentingStatus.NONE) // 대여 가능한 상태만 필터링
                 .collect(Collectors.groupingBy(Item::getCategory))
                 .values()
                 .stream()
@@ -335,6 +336,7 @@ public class ItemService {
 
         // Item 객체들을 ItemResponseDto 객체로 변환
         List<ItemDto.ItemResponseDto> MytopItemsResponseDtos = topItems.stream()
+                .filter(item -> item.getRentingStatus() == RentingStatus.NONE) // 대여 가능한 상태만 필터링
                 .collect(Collectors.groupingBy(Item::getCategory))
                 .values()
                 .stream()
