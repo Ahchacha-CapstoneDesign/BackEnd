@@ -19,14 +19,20 @@ public class ChatMessage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
-    private Long itemId;
+    private String message; //내용
 
     @ManyToOne
     @JoinColumn(name = "user_id") //보내는 사람
     @JsonBackReference
     private User user;
 
-    @NotNull
-    private String message; //내용
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    @JsonBackReference
+    private Item item;
+
+    @ManyToOne
+    @JoinColumn(name = "chatRoom_id")
+    @JsonBackReference
+    private ChatRoom chatRoom;
 }

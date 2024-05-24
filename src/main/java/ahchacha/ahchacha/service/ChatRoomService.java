@@ -29,9 +29,9 @@ public class ChatRoomService {
     }
 
     //채팅방 생성
-    public ChatRoom createRoom(Long itemId) {
-        ChatRoom chatRoom = new ChatRoom(itemId);
-        chatRoomRepository.save(chatRoom);
-        return chatRoom;
-    }
+//    public ChatRoom createRoom(Long itemId) {
+//        ChatRoom chatRoom = new ChatRoom(itemId);
+//        chatRoomRepository.save(chatRoom);
+//        return chatRoom;
+//    }
 }

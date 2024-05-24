@@ -20,14 +20,14 @@ public class ChatRoomController {
     private final ChatMessageRepository chatMessageRepository;
 
     // 채팅방 생성
-    @PostMapping("/room")
-    public ChatRoom createRoom(@RequestBody Map<String, Object> requestPayload) {
-        String id = (String) requestPayload.get("itemId");
-
-        Integer intId = Integer.parseInt(id);
-        Long itemId = intId.longValue();
-        return chatService.createRoom(itemId);
-    }
+//    @PostMapping("/room")
+//    public ChatRoom createRoom(@RequestBody Map<String, Object> requestPayload) {
+//        String id = (String) requestPayload.get("itemId");
+//
+//        Integer intId = Integer.parseInt(id);
+//        Long itemId = intId.longValue();
+//        return chatService.createRoom(itemId);
+//    }
 
     // 특정 채팅방 조회
     @GetMapping("/room/{itemId}")
