@@ -1,5 +1,6 @@
 package ahchacha.ahchacha.config;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.messaging.Message;
@@ -14,13 +15,14 @@ public class FilterChannelInterceptor implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
-        System.out.println("full message:" + message);
-        System.out.println("auth:" + headerAccessor.getNativeHeader("Authorization"));
-        System.out.println(headerAccessor.getHeader("nativeHeaders").getClass());
+
         if (StompCommand.CONNECT.equals(headerAccessor.getCommand())) {
-            System.out.println("msg: " + "conne");
+            HttpSession session = (HttpSession) headerAccessor.getSessionAttributes().get("HTTP_SESSION");
+            if (session == null || session.getAttribute("user") == null) {
+                throw new IllegalArgumentException("User not authenticated!");
+            }
         }
-        //throw new MessagingException("no permission! ");
+
         return message;
     }
 }
