@@ -195,4 +195,18 @@ public class ReservationController {
         reservationService.deleteReservationAndResetRentingStatusByOwner(reservationId, user);
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "대여한 사람이 예약 취소", description = "reservation의 id를 입력하세요")
+    @DeleteMapping("/cancel/renter/{reservationId}")
+    public ResponseEntity<?> cancelReservationByRenter(@PathVariable Long reservationId, HttpSession session){
+        reservationService.cancelReservationByRenter(reservationId, session);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "아이템 주인이 예약 취소", description = "reservation의 id를 입력하세요")
+    @DeleteMapping("/cancel/owner/{reservationId}")
+    public ResponseEntity<?> cancelReservationByItemOwner(@PathVariable Long reservationId, HttpSession session){
+        reservationService.cancelReservationByItemOwner(reservationId, session);
+        return ResponseEntity.ok().build();
+    }
 }

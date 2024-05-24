@@ -93,6 +93,7 @@ public class NotificationService {
             // 한 시간 전 예약에 대한 알림 생성
             for (Reservations reservation : oneHourReservations) {
                 if(reservation.isNotificationSentHour()) continue;
+                if(reservation.isCancelStatus()) continue;
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)
@@ -106,6 +107,7 @@ public class NotificationService {
             // 24시간 전 예약에 대한 알림 생성
             for (Reservations reservation : twentyFourHourReservations) {
                 if(reservation.isNotificationSentDay()) continue;
+                if(reservation.isCancelStatus()) continue;
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)
