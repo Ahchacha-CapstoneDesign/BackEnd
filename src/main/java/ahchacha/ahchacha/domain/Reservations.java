@@ -32,7 +32,7 @@ public class Reservations extends BaseEntity {
     private boolean notificationSentDay;
 
     private String title;
-    private String itemUserNickName; //아이템 등록한사람 이름
+//    private String itemUserNickName; //아이템 등록한사람 이름
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -42,7 +42,7 @@ public class Reservations extends BaseEntity {
     private LocalDateTime returnTime;
     private int totalPrice; // 총금액
 
-    private String userNickname;
+//    private String userNickname;
     private String userPhoneNumber;
 
     private String itemBorrowPlace;
@@ -54,8 +54,8 @@ public class Reservations extends BaseEntity {
     private String userStatus;
 
     private Long itemUserId; //아이템 등록한사람 id
-    private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
-    private String userDefaultProfile; //아이템 예약하는사람 프사
+//    private String itemRegisterDefaultProfile; //아이템 등록한사람 프사
+//    private String userDefaultProfile; //아이템 예약하는사람 프사
 
     private ToRenterWrittenStatus toRenterWrittenStatus; //리뷰 쓴지(YES) 안쓴지(NO)
     private ToOwnerWrittenStatus toOwnerWrittenStatus;

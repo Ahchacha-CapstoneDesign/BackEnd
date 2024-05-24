@@ -65,14 +65,14 @@ public class ReservationDto {
 
                     .title(reservations.getTitle())
 
-                    .userNickname(reservations.getUserNickname())
+                    .userNickname(reservations.getUser().getNickname())
                     .userName(reservations.getUserName())
-                    .userDefaultProfile(reservations.getUserDefaultProfile())
+                    .userDefaultProfile(reservations.getUser().getDefaultProfile())
 
                     .itemId(reservations.getItem().getId())
                     .itemUserId(reservations.getItemUserId())
-                    .itemRegisterDefaultProfile(reservations.getItemRegisterDefaultProfile())
-                    .itemUserNickName(reservations.getItemUserNickName())
+                    .itemRegisterDefaultProfile(reservations.getItem().getUser().getDefaultProfile())
+                    .itemUserNickName(reservations.getItem().getUser().getNickname())
 
                     .itemBorrowPlace(reservations.getItemBorrowPlace())
                     .itemReturnPlace(reservations.getItemReturnPlace())

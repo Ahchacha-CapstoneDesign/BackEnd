@@ -34,12 +34,12 @@ public class Review extends BaseEntity {
     private PersonType personType;
 
     private Long renterUserId; //내 물품 빌린사람 id
-    private String renterNickName; //내 물품 빌린사람 닉네임
-    private String renterProfile; //내 물품 빌린사람 프로필
+//    private String renterNickName; //내 물품 빌린사람 닉네임
+//    private String renterProfile; //내 물품 빌린사람 프로필
 
     private Long itemOwnerId;
-    private String ownerNickName; //내가 예약해서 반납한 아이템 주인의 닉네임
-    private String ownerProfile; //내가 예약해서 반납한 아이템 주인의 프로필
+//    private String ownerNickName; //내가 예약해서 반납한 아이템 주인의 닉네임
+//    private String ownerProfile; //내가 예약해서 반납한 아이템 주인의 프로필
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
