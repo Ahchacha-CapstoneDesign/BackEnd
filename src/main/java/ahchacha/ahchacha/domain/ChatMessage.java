@@ -15,31 +15,24 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 public class ChatMessage extends BaseEntity {
-
-    public ChatMessage(String message) {
-        this.type = MessageType.GREETING;
-        this.message = message;
-    }
-    public enum MessageType {
-        GREETING, TALK
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private MessageType type;
+    private String message; //내용
 
-    @NotNull
-    private Long itemId;
-
-    @ManyToOne @NotNull
+    @ManyToOne
     @JoinColumn(name = "user_id") //보내는 사람
     @JsonBackReference
     private User user;
 
-    @NotNull
-    private String message; //내용
+    @ManyToOne
+    @JoinColumn(name = "item_id")
+    @JsonBackReference
+    private Item item;
+
+    @ManyToOne
+    @JoinColumn(name = "chatRoom_id")
+    @JsonBackReference
+    private ChatRoom chatRoom;
 }
