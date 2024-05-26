@@ -23,8 +23,11 @@ public class ChatRoomController {
     // 채팅방 생성
     @PostMapping("/room")
     public ChatRoom createChatRoom(@RequestBody Map<String, Object> payload, HttpSession session) {
-        Long itemId = Long.parseLong((String) payload.get("itemId"));
-        return chatRoomService.createRoom(itemId, session);
+//        Long itemId = Long.parseLong((String) payload.get("itemId"));
+//        return chatRoomService.createRoom(itemId, session);
+        Long itemId = ((Number) payload.get("itemId")).longValue();
+        ChatRoom chatRoom = chatRoomService.createRoom(itemId, session);
+        return chatRoom;
     }
 
     // 특정 채팅방 조회
