@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")  // 더 넓은 패스 매핑
                 .allowedOrigins(
                         "http://localhost:3000/",
-                        "https://app.ahchacha.site/"  // 추가된 도메인
+                        "https://www.ahchacha.site/"  // 추가된 도메인
                 )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
                 .allowedHeaders("Content-Type", "Authorization")  // 필요한 헤더 추가
