@@ -65,6 +65,16 @@ public class NotificationService {
                                 .communityTitle(null)
                                 .itemTitle(notification.getReservations().getItem().getTitle())
                                 .createdAt(notification.getCreatedAt());
+                    } else if (notification.getReview() != null){
+                        // 리뷰 알림
+                        builder.writer(notification.getReview().getUser().getNickname())
+                                .commentId(null)
+                                .comment(null)
+                                .communityId(null)
+                                .communityTitle(null)
+                                .itemTitle(notification.getReview().getReservations().getItem().getTitle())
+                                .createdAt(notification.getCreatedAt());
+
                     }
 
                     return builder.build();

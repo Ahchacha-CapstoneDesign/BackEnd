@@ -47,5 +47,11 @@ public class Notification extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Reservations reservations;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "review_id")
+    @JsonBackReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Review review;
+
     private boolean isRead;
 }
