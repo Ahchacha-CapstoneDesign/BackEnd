@@ -184,6 +184,7 @@ public class ReservationService {
                 .itemReturnPlace(item.getReturnPlace())
 //                .userNickname(user.getNickname())
                 .userPhoneNumber(user.getPhoneNumber())
+                .cancelStatus(false)
 //                .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
 //                .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
 //                .imageUrls(Collections.singletonList(imageUrl))
@@ -235,6 +236,7 @@ public class ReservationService {
                 .userTrack1(user.getTrack1()) //트랙
                 .userGrade(user.getGrade()) //4학년
                 .userStatus(user.getStatus()) //복학
+                .cancelStatus(false)
 //                .itemRegisterDefaultProfile(itemRegisterDefaultProfile)
 //                .userDefaultProfile(user.getDefaultProfile()) // 예약하는 사람의 프로필
 //                .imageUrls(Collections.singletonList(imageUrl))
@@ -286,11 +288,80 @@ public class ReservationService {
         reservationRepository.delete(reservation);
     }
 
+    // 대여한 사람이 예약 취소
+    public void cancelReservationByRenter(Long reservationId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        Reservations reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+
+        // 예약을 한 사용자와 현재 세션의 사용자가 일치하는지 확인
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new IllegalStateException("You can only cancel your own reservations");
+        }
+
+        // 아이템 상태를 초기화
+        Item item = reservation.getItem();
+        item.setReservation(Reservation.YES); // 예약 가능
+        item.setRentingStatus(RentingStatus.NONE);
+        itemRepository.save(item);
+
+        // 알림 전송
+        sendCancelNotification(user, reservation);
+        sendCancelNotification(item.getUser(), reservation);
+
+        reservation.setCancelStatus(true);
+        reservationRepository.save(reservation);
+
+        // 예약 내역 삭제
+//        reservationRepository.delete(reservation);
+    }
+
+    //아이템 주인이 예약 취소
+    public void cancelReservationByItemOwner(Long reservationId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        Reservations reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new IllegalArgumentException("Reservation not found"));
+
+        //아이템 주인과 현재 세션의 사용자가 일치하는지 확인
+        if (!reservation.getItem().getUser().getId().equals(user.getId())) {
+            throw new IllegalStateException("You can only cancel your own reservations");
+        }
+
+        // 아이템 상태를 초기화
+        Item item = reservation.getItem();
+        item.setReservation(Reservation.YES); // 예약 가능
+        item.setRentingStatus(RentingStatus.NONE);
+        itemRepository.save(item);
+
+        // 알림 전송
+        sendCancelNotification(user, reservation);
+        sendCancelNotification(item.getUser(), reservation);
+
+        reservation.setCancelStatus(true);
+        reservationRepository.save(reservation);
+
+        // 예약 내역 삭제
+//        reservationRepository.delete(reservation);
+    }
+
     private void sendNotification(User user, Reservations reservations) {
         Notification notification = Notification.builder()
                 .user(user)
                 .reservations(reservations)
                 .notificationType(NotificationType.RESERVATION)
+                .isRead(false)  // 초기에 알림은 읽지 않음
+                .build();
+
+        notificationRepository.save(notification);
+    }
+
+    private void sendCancelNotification(User user, Reservations reservations) {
+        Notification notification = Notification.builder()
+                .user(user)
+                .reservations(reservations)
+                .notificationType(NotificationType.CANCEL)
                 .isRead(false)  // 초기에 알림은 읽지 않음
                 .build();
 

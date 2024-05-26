@@ -1,16 +1,12 @@
 package ahchacha.ahchacha.service;
 
-import ahchacha.ahchacha.domain.Reservations;
-import ahchacha.ahchacha.domain.Review;
-import ahchacha.ahchacha.domain.User;
+import ahchacha.ahchacha.domain.*;
+import ahchacha.ahchacha.domain.common.enums.NotificationType;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
 import ahchacha.ahchacha.domain.common.enums.ToOwnerWrittenStatus;
 import ahchacha.ahchacha.domain.common.enums.ToRenterWrittenStatus;
 import ahchacha.ahchacha.dto.ReviewDto;
-import ahchacha.ahchacha.repository.ItemRepository;
-import ahchacha.ahchacha.repository.ReservationRepository;
-import ahchacha.ahchacha.repository.ReviewRepository;
-import ahchacha.ahchacha.repository.UserRepository;
+import ahchacha.ahchacha.repository.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -30,6 +26,7 @@ public class ReviewService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
+    private final NotificationRepository notificationRepository;
 
     @Transactional //내가 등록한 물품을 예약했던 user에 대해 리뷰
     public ReviewDto.ReviewResponseDto createRenterReview(ReviewDto.ReviewRequestDto reviewDto, HttpSession session) {
@@ -61,6 +58,7 @@ public class ReviewService {
 
         updateAverageReviewScoreForRenter(reservation.getUser().getId());
 
+        sendNotificationToRenter(reservation.getUser(),review);
 
         return ReviewDto.ReviewResponseDto.toDto(createdReview);
     }
@@ -96,6 +94,7 @@ public class ReviewService {
         // 리뷰가 작성될 때마다 해당 사용자의 리뷰 점수 업데이트
         updateAverageReviewScore(reservation.getItemUserId());
 
+        sendNotificationToOwner(reservation.getItem().getUser(),review);
 
         return ReviewDto.ReviewResponseDto.toDto(createdReview);
     }
@@ -244,5 +243,27 @@ public class ReviewService {
                 .ifPresent(reviews::add);
 
         return reviews;
+    }
+
+    private void sendNotificationToOwner(User user, Review review) {
+        Notification notification = Notification.builder()
+                .user(user)
+                .review(review)
+                .notificationType(NotificationType.REVIEW_TO_OWNER)
+                .isRead(false)  // 초기에 알림은 읽지 않음
+                .build();
+
+        notificationRepository.save(notification);
+    }
+
+    private void sendNotificationToRenter(User user, Review review) {
+        Notification notification = Notification.builder()
+                .user(user)
+                .review(review)
+                .notificationType(NotificationType.REVIEW_TO_RENTER)
+                .isRead(false)  // 초기에 알림은 읽지 않음
+                .build();
+
+        notificationRepository.save(notification);
     }
 }

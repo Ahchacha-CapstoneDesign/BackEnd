@@ -60,6 +60,8 @@ public class Reservations extends BaseEntity {
     private ToRenterWrittenStatus toRenterWrittenStatus; //리뷰 쓴지(YES) 안쓴지(NO)
     private ToOwnerWrittenStatus toOwnerWrittenStatus;
 
+    private boolean cancelStatus; // true 취소 됨 , false 취소 안됨
+
     @ElementCollection
     @CollectionTable(name = "reservations_images", joinColumns = @JoinColumn(name = "reservations_id"))
     @Column(name = "image_url")

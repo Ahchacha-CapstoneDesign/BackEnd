@@ -65,6 +65,16 @@ public class NotificationService {
                                 .communityTitle(null)
                                 .itemTitle(notification.getReservations().getItem().getTitle())
                                 .createdAt(notification.getCreatedAt());
+                    } else if (notification.getReview() != null){
+                        // 리뷰 알림
+                        builder.writer(notification.getReview().getUser().getNickname())
+                                .commentId(null)
+                                .comment(null)
+                                .communityId(null)
+                                .communityTitle(null)
+                                .itemTitle(notification.getReview().getReservations().getItem().getTitle())
+                                .createdAt(notification.getCreatedAt());
+
                     }
 
                     return builder.build();
@@ -93,6 +103,7 @@ public class NotificationService {
             // 한 시간 전 예약에 대한 알림 생성
             for (Reservations reservation : oneHourReservations) {
                 if(reservation.isNotificationSentHour()) continue;
+                if(reservation.isCancelStatus()) continue;
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)
@@ -106,6 +117,7 @@ public class NotificationService {
             // 24시간 전 예약에 대한 알림 생성
             for (Reservations reservation : twentyFourHourReservations) {
                 if(reservation.isNotificationSentDay()) continue;
+                if(reservation.isCancelStatus()) continue;
                 Notification notification = Notification.builder()
                         .user(user)
                         .reservations(reservation)

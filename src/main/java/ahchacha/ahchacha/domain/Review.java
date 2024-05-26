@@ -3,6 +3,7 @@ package ahchacha.ahchacha.domain;
 import ahchacha.ahchacha.domain.common.BaseEntity;
 import ahchacha.ahchacha.domain.common.enums.PersonType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 @Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @AllArgsConstructor
 public class Review extends BaseEntity {
     @Id
