@@ -9,10 +9,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("ahchacha.netlify.app")
+        registry.addMapping("/**")  // 더 넓은 패스 매핑
+                .allowedOrigins(
+                        "http://localhost:3000/",
+                        "https://app.ahchacha.site/"  // 추가된 도메인
+                )
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE")
-                .allowedHeaders("*")
+                .allowedHeaders("Content-Type", "Authorization")  // 필요한 헤더 추가
                 .allowCredentials(true);
     }
 }
