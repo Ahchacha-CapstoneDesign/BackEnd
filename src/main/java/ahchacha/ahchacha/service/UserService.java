@@ -238,6 +238,15 @@ public class UserService {
         Optional<User> existingUser = userRepository.findByNickname(nickname);
         if(existingUser.isPresent() && !existingUser.get().getId().equals(user.getId()))
             throw new IllegalStateException("이미 사용중인 닉네임 입니다.");
+
+        user.setAuthentication(new ArrayList<>());
+        user.setChatMessages(new ArrayList<>());
+        user.setChatRooms(new ArrayList<>());
+        user.setCommunities(new ArrayList<>());
+        user.setItems(new ArrayList<>());
+        user.setReservations(new ArrayList<>());
+        user.setNotifications(new ArrayList<>());
+        user.setReviews(new ArrayList<>());
         // 닉네임 변경
         user.setNickname(nickname);
         // 변경된 사용자 정보를 데이터베이스에 저장
