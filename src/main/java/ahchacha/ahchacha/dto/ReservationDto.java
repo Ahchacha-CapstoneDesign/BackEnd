@@ -56,6 +56,9 @@ public class ReservationDto {
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 
+        private boolean cancelStatus; // 예약 취소 상태
+
+
         public static ReservationDto.ReservationResponseDto toDto(Reservations reservations) {
             return ReservationDto.ReservationResponseDto.builder()
                     .userId(reservations.getUser().getId())
@@ -85,6 +88,8 @@ public class ReservationDto {
 
                     .toRenterWrittenStatus(reservations.getToRenterWrittenStatus())
                     .toOwnerWrittenStatus(reservations.getToOwnerWrittenStatus())
+
+                    .cancelStatus(reservations.isCancelStatus()) // 예약 취소 상태 추가
 
                     .createdAt(reservations.getCreatedAt())
                     .updatedAt(reservations.getUpdatedAt())
