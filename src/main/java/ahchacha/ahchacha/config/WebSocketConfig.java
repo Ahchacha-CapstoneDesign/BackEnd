@@ -28,7 +28,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/gs-guide-websocket")
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins("http://localhost:3000/", "https://app.ahchacha.site/")
                 .addInterceptors(new HttpSessionHandshakeInterceptor())  // Add the handshake interceptor for sessions
                 .withSockJS();
     }
