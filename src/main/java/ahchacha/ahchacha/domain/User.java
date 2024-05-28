@@ -45,6 +45,9 @@ public class User {
 
     private BigDecimal renterReviewScore;
 
+    @Column(nullable = true)
+    private String kakaoUrl;
+
     @Enumerated(EnumType.STRING)
     private PersonOrOfficial personOrOfficial; //공공 로그인 or 개인 로그인
 

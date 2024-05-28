@@ -153,4 +153,21 @@ public class UserController {
         return new ResponseEntity<>(userProfile, HttpStatus.OK);
     }
 
+    @Operation(summary = "오픈채팅방 링크 설정")
+    @PostMapping("/kakaoUrl")
+    public ResponseEntity<String> setKakoUrl(@RequestParam String url, HttpSession session) {
+        try {
+            userService.setKakaoUrl(url, session);
+            return ResponseEntity.ok("오픈채팅방 링크가 성공적으로 변경되었습니다.");
+        } catch (IllegalStateException e) {
+            // 여기에서는 사용자 정의 예외 메시지를 반환합니다.
+            logger.warn("IllegalStateException: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            // 그 외 모든 예외에 대해서는 더 일반적인 오류 메시지를 반환합니다.
+            logger.error("Unexpected error occurred while changing nickname", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("오픈채팅방 링크 변경 중 예상치 못한 오류가 발생하였습니다.");
+        }
+    }
+
 }
