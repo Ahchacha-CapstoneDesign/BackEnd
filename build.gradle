@@ -30,7 +30,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	//인증
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
+//   implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	//websocket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
