@@ -83,7 +83,6 @@ public class ItemDto {
                     .kakaoUrl(item.getUser().getKakaoUrl())
                     .ownerReviewScore(item.getUser().getOwnerReviewScore())
                     .renterReviewScore(item.getUser().getRenterReviewScore())
-
                     .build();
         }
     }
