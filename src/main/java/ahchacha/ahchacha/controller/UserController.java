@@ -9,6 +9,8 @@ import ahchacha.ahchacha.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
@@ -88,9 +91,11 @@ public class UserController {
             return ResponseEntity.ok("닉네임이 성공적으로 변경되었습니다.");
         } catch (IllegalStateException e) {
             // 여기에서는 사용자 정의 예외 메시지를 반환합니다.
+            logger.warn("IllegalStateException: {}", e.getMessage());
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
             // 그 외 모든 예외에 대해서는 더 일반적인 오류 메시지를 반환합니다.
+            logger.error("Unexpected error occurred while changing nickname", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("닉네임 변경 중 예상치 못한 오류가 발생하였습니다.");
         }
     }
