@@ -34,6 +34,7 @@ public class UserDto {
         private String track2;
         private String defaultProfile;
         private PersonOrOfficial personOrOfficial;  // 응답에 로그인 유형 포함
+        private String kakaoUrl;
 
         public static UserResponseDto toDto(User user) {
             return UserResponseDto.builder()

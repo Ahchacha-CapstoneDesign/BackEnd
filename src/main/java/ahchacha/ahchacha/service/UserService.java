@@ -253,6 +253,20 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void setKakaoUrl(String url, HttpSession session) {
+        // 세션에서 사용자 정보를 가져옴
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            // 사용자가 로그인하지 않았을 경우 에러 처리
+            throw new IllegalStateException("로그인이 필요합니다.");
+        }
+
+        // 닉네임 변경
+        user.setKakaoUrl(url);
+        // 변경된 사용자 정보를 데이터베이스에 저장
+        userRepository.save(user);
+    }
+
     public void setUserType(PersonOrOfficial userType, HttpSession session)
     {
         User user = (User) session.getAttribute("user");
