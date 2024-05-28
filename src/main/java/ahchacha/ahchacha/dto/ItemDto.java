@@ -52,6 +52,7 @@ public class ItemDto {
         private LocalDateTime updatedAt;
         private String userProfile; //아이템 등록한사람 프로필
         private String userNickName; //아이템 등록한사람 닉네임
+        private String kakaoUrl;
 
         private BigDecimal ownerReviewScore;
         private BigDecimal renterReviewScore;
@@ -79,7 +80,7 @@ public class ItemDto {
                     .updatedAt(item.getUpdatedAt())
                     .userProfile(item.getUser().getDefaultProfile())
                     .userNickName(item.getUser().getNickname())
-
+                    .kakaoUrl(item.getUser().getKakaoUrl())
                     .ownerReviewScore(item.getUser().getOwnerReviewScore())
                     .renterReviewScore(item.getUser().getRenterReviewScore())
 
