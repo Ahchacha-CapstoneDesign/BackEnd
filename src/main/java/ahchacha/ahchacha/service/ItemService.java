@@ -88,6 +88,60 @@ public class ItemService {
     }
 
     @Transactional
+    public ItemDto.ItemResponseDto recreateItem(Long itemId, ItemDto.ItemRequestDto itemDto,
+                                              List<MultipartFile> files, List<String> files2,
+                                              HttpSession session) {
+        User user = (User) session.getAttribute("user");
+
+        //이미지 업로드
+        List<String> pictureUrls = new ArrayList<>(); // 이미지 URL들을 저장할 리스트
+
+        Item item = itemRepository.findById(itemId).orElseThrow(() ->
+                new IllegalArgumentException("Invalid item Id: " + itemId));
+
+        if (!item.getUser().getId().equals(user.getId())) {
+            throw new IllegalArgumentException("You do not have permission to update this item.");
+        }
+
+        if(files2!=null&&!files2.isEmpty()){
+            for(String file:files2){
+                pictureUrls.add(file);
+            }}
+
+        if (files != null && !files.isEmpty()){
+            for (MultipartFile file : files) {
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder()
+                        .uuid(uuid).build());
+                String pictureUrl = s3Manager.uploadFile(s3Manager.generateItemKeyName(savedUuid), file);
+                pictureUrls.add(pictureUrl); // 리스트에 이미지 URL 추가
+
+                System.out.println("s3 url(클릭 시 브라우저에 사진 뜨는지 확인): " + pictureUrl);
+            }
+        }
+
+         Item.builder()
+                .user(user)
+                .title(itemDto.getTitle())
+                .pricePerHour(itemDto.getPricePerHour())
+                .canBorrowDateTime(itemDto.getCanBorrowDateTime())
+                .returnDateTime(itemDto.getReturnDateTime())
+                .borrowPlace(itemDto.getBorrowPlace())
+                .returnPlace(itemDto.getReturnPlace())
+                .introduction((itemDto.getIntroduction()))
+                .reservation(Reservation.YES)
+                .rentingStatus(RentingStatus.NONE)
+                .itemStatus(itemDto.getItemStatus())
+                .imageUrls(pictureUrls)
+                .category(itemDto.getCategory())
+                .personOrOfficial(user.getPersonOrOfficial())
+                .build();
+
+        Item createdItem = itemRepository.save(item);
+        return ItemDto.ItemResponseDto.toDto(createdItem);
+    }
+
+    @Transactional
     public ItemDto.ItemResponseDto updateItem(Long itemId, ItemDto.ItemRequestDto itemDto, List<MultipartFile> files, List<String> files2,HttpSession session) {
         User user = (User) session.getAttribute("user");
         List<String> pictureUrls = new ArrayList<>();
