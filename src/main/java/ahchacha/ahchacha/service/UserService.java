@@ -240,8 +240,6 @@ public class UserService {
             throw new IllegalStateException("이미 사용중인 닉네임 입니다.");
 
         user.setAuthentication(new ArrayList<>());
-        user.setChatMessages(new ArrayList<>());
-        user.setChatRooms(new ArrayList<>());
         user.setCommunities(new ArrayList<>());
         user.setItems(new ArrayList<>());
         user.setReservations(new ArrayList<>());

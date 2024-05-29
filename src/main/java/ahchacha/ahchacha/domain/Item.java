@@ -85,12 +85,4 @@ public class Item extends BaseEntity {
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Reservations> reservations = new ArrayList<>();
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<ChatRoom> chatRooms = new ArrayList<>();
-
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private List<ChatMessage> chatMessages = new ArrayList<>();
 }
