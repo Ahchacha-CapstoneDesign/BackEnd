@@ -89,24 +89,16 @@ public class ItemService {
 
     @Transactional
     public ItemDto.ItemResponseDto recreateItem(Long itemId, ItemDto.ItemRequestDto itemDto,
-                                              List<MultipartFile> files, List<String> files2,
+                                              List<MultipartFile> files,
                                               HttpSession session) {
         User user = (User) session.getAttribute("user");
 
-        //이미지 업로드
-        List<String> pictureUrls = new ArrayList<>(); // 이미지 URL들을 저장할 리스트
-
+        // 아이템 ID로 아이템 조회
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new IllegalArgumentException("Invalid item Id: " + itemId));
 
-        if (!item.getUser().getId().equals(user.getId())) {
-            throw new IllegalArgumentException("You do not have permission to update this item.");
-        }
-
-        if(files2!=null&&!files2.isEmpty()){
-            for(String file:files2){
-                pictureUrls.add(file);
-            }}
+        //이미지 업로드
+        List<String> pictureUrls = new ArrayList<>(item.getImageUrls());
 
         if (files != null && !files.isEmpty()){
             for (MultipartFile file : files) {
@@ -120,7 +112,7 @@ public class ItemService {
             }
         }
 
-         Item.builder()
+        Item newitem = Item.builder()
                 .user(user)
                 .title(itemDto.getTitle())
                 .pricePerHour(itemDto.getPricePerHour())
@@ -137,7 +129,7 @@ public class ItemService {
                 .personOrOfficial(user.getPersonOrOfficial())
                 .build();
 
-        Item createdItem = itemRepository.save(item);
+        Item createdItem = itemRepository.save(newitem);
         return ItemDto.ItemResponseDto.toDto(createdItem);
     }
 
