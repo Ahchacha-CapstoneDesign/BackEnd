@@ -144,20 +144,18 @@ public class ItemController {
 
     @Operation(summary = "아이템 재등록", description = "canBorrowDateTime/returnDateTime 예시 : 2024-03-17T10:26:08")
     @PostMapping(value = "/{itemId}/recreate", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ItemDto.ItemResponseDto> reCreateItem(
-            @PathVariable Long itemId,
-            @RequestPart(value = "file", required = false) List<MultipartFile> files,
-            @RequestParam(value = "file2", required = false) List<String> files2,
-            @RequestParam(name = "title") String title,
-            @RequestParam(name = "pricePerHour") int pricePerHour,
-            @RequestParam(name = "canBorrowDateTime") LocalDateTime canBorrowDateTime,
-            @RequestParam(name = "returnDateTime") LocalDateTime returnDateTime,
-            @RequestParam(name = "borrowPlace") String borrowPlace,
-            @RequestParam(name = "returnPlace") String returnPlace,
-            @RequestParam(name = "introduction") String introduction,
-            @RequestParam(name = "itemStatus") String itemStatusString,
-            @RequestParam(name = "category") Category category,
-            HttpSession session) {
+    public ResponseEntity<ItemDto.ItemResponseDto> recreate(@PathVariable Long itemId,
+                                                            @RequestPart(value = "file", required = false) List<MultipartFile> files,
+                                                            @RequestParam(name = "title") String title,
+                                                            @RequestParam(name = "pricePerHour") int pricePerHour,
+                                                            @RequestParam(name = "canBorrowDateTime") LocalDateTime canBorrowDateTime,
+                                                            @RequestParam(name = "returnDateTime") LocalDateTime returnDateTime,
+                                                            @RequestParam(name = "borrowPlace") String borrowPlace,
+                                                            @RequestParam(name = "returnPlace") String returnPlace,
+                                                            @RequestParam(name = "introduction") String introduction,
+                                                            @RequestParam(name = "itemStatus") String itemStatusString,
+                                                            @RequestParam(name = "category") Category category,
+                                                            HttpSession session){
 
         ItemStatus itemStatus;
         switch (itemStatusString) {
@@ -193,8 +191,8 @@ public class ItemController {
                 .category(category)
                 .build();
 
-        ItemDto.ItemResponseDto itemResponseDto = itemService.recreateItem(itemId, itemRequestDto, files, files2, session);
-        return new ResponseEntity<>(itemResponseDto, HttpStatus.OK);
+        ItemDto.ItemResponseDto itemResponseDto = itemService.recreateItem(itemId,itemRequestDto, files, session);
+        return new ResponseEntity<>(itemResponseDto, HttpStatus.CREATED);
     }
 
 
