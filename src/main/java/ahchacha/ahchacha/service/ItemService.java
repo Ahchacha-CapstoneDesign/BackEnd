@@ -89,24 +89,28 @@ public class ItemService {
 
     @Transactional
     public ItemDto.ItemResponseDto recreateItem(Long itemId, ItemDto.ItemRequestDto itemDto,
-                                              List<MultipartFile> files,
-                                              HttpSession session) {
+                                                List<MultipartFile> files, List<String> files2, HttpSession session) {
         User user = (User) session.getAttribute("user");
 
         // 아이템 ID로 아이템 조회
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new IllegalArgumentException("Invalid item Id: " + itemId));
 
-        //이미지 업로드
-        List<String> pictureUrls = new ArrayList<>(item.getImageUrls());
+        // 기존 이미지 URL들을 저장할 리스트
+        List<String> pictureUrls = new ArrayList<>();
 
-        if (files != null && !files.isEmpty()){
+        // 기존 이미지 URL 처리
+        if (files2 != null && !files2.isEmpty()) {
+            pictureUrls.addAll(files2);
+        }
+
+        // 새로운 이미지 업로드
+        if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 String uuid = UUID.randomUUID().toString();
-                Uuid savedUuid = uuidRepository.save(Uuid.builder()
-                        .uuid(uuid).build());
+                Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
                 String pictureUrl = s3Manager.uploadFile(s3Manager.generateItemKeyName(savedUuid), file);
-                pictureUrls.add(pictureUrl); // 리스트에 이미지 URL 추가
+                pictureUrls.add(pictureUrl);
 
                 System.out.println("s3 url(클릭 시 브라우저에 사진 뜨는지 확인): " + pictureUrl);
             }
