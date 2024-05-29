@@ -212,7 +212,7 @@ public class ItemController {
     @Operation(summary = "viewCount가 높은 순으로 카테고리 10개를 추출")
     @GetMapping("/categories/top")
     public ResponseEntity<List<ItemDto.CategoryCountDto>> getTopCategoriesByViewCount() {
-        List<ItemDto.CategoryCountDto> topCategories = itemService.getTopCategoriesByViewCount(10);
+        List<ItemDto.CategoryCountDto> topCategories = itemService.getTopCategoriesByViewCount(11);
         return ResponseEntity.ok(topCategories);
     }
 
