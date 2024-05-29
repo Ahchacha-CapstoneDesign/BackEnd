@@ -1,6 +1,11 @@
+<div align="center">
+<img width="100%" src="https://github.com/Ahchacha-CapstoneDesign/.github/assets/122718910/e84e979d-c7de-4e0e-aca6-9bd62f36380f" />
+</div>
+
 #  💻 한성대학교 내 물품 쉐어링(대여 및 관리) 웹서비스 Ah!Chacha
 
-- 배포 URL : 
+
+- 배포 URL : https://www.ahchacha.site/
 - ID: 한성대학교 종합정보시스템 학번
 - Password: 한성대학교 종합정보시스템 비밀번호
 
@@ -23,8 +28,7 @@
 3) **검색 및 필터링**: 사용자가 필요한 물품을 쉽게 찾을 수 있도록 키워드 검색 및 다양한 필터링 옵션 (예: 카테고리별, 최근 작성순, 예약 가능 여부)
 4) **사용자 평가 및 리뷰**: 대여한 물품이나 이용한 서비스에 대한 사용자의 평가와 리뷰를 남길 수 있는 기능
 5) **알림**: 물품 반납 기간을 하루 전과 한 시간으로 나눠서 알림을 보내는 기능, 채팅 알림 기능
-6) **채팅**: 실시간 채팅이 가능하며 대여 과장에서 발생할 수 있는 질문이나 요청사항 등을 확인할 수 있는 기능
-7) **커뮤니티**: 사용자들이 원하는 물품이나 사용 팁, 공지 사항, 학교 생활 등을 공유할 수 있는 게시판 기능
+6) **커뮤니티**: 사용자들이 원하는 물품이나 사용 팁, 공지 사항, 학교 생활 등을 공유할 수 있는 게시판 기능
 
 <br>
 
@@ -52,7 +56,7 @@
 4. **등록**
     - 카테고리 선택
     - 물품 등록(날짜, 비용, 사진, 상태 및 상세 내용)
-5. **알림 및 채팅**
+5. **알림 및 오픈채팅방으로 연결**
 6. **게시판**
     - 글 등록
     - 글 목록
@@ -78,7 +82,7 @@
 <br>
 
 ## Flowchart(화면흐름도)
-상세URL: https://zrr.kr/qKra
+상세URL: https://zrr.kr/R1SK
 <div align="center">
     <img width="694" alt="스크린샷 2024-05-14 오후 11 40 55" src="https://github.com/Ahchacha-CapstoneDesign/Web/assets/122718910/10e15de2-d22c-4c62-b8e1-c67d42a0a9aa">
 </div>
@@ -91,6 +95,28 @@
 </div>
 
 <br>
+
+<div align=center><h1>📚 Use</h1></div>
+<div align=center> 
+    <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white">
+    <img src="https://img.shields.io/badge/html5-E34F26?style=for-the-badge&logo=html5&logoColor=white">
+    <img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white">
+    <img src="https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+    <br>
+    <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black">
+    <img src="https://img.shields.io/badge/springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+    <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white">
+    <br>
+    <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat-square&logo=Visual Studio Code&logoColor=white"/>
+    <img src="https://camo.githubusercontent.com/4bdc09f227a5a58ccbb54fba903361f853b327a17f143281a38034b080567163/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f496e74656c6c694a5f494445412d3030303030303f7374796c653d666c61742d737175617265266c6f676f3d496e74656c6c694a25323049444541266c6f676f436f6c6f723d7768697465"/>
+    <img src="https://img.shields.io/badge/Netlify-00C7B7?style=flat-square&logo=Netlify&logoColor=white" />
+    <br>
+    <img src="https://camo.githubusercontent.com/ac8e50ec4dfc3513f4d66c023dcecf106f3d7e2d5ad70da9375cf71bd1987e93/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4e6f74696f6e2d3030303030303f7374796c653d666c61742d737175617265266c6f676f3d4e6f74696f6e266c6f676f436f6c6f723d7768697465">
+    <img src="https://img.shields.io/badge/amazonaws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white">
+    <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
+    <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
+    
+</div>
 
 ## 1. 개발 언어
 - **JAVA** : Java는 그 자체로 플랫폼으로 사용할 수 있는 다중 플랫폼, 객체 지향 및 네트워크 중심 언어로서 프로젝트 내 백엔드 파트에서 사용
@@ -131,15 +157,15 @@
 
 - **화면 설계 및 사용자 경험(UI/UX) 설계**
     1) **설계 원칙과 목표**
-        • 사용 편의성: 빠르고 직관적인 검색을 가능하게 하는 레이아웃
-        • 정보 접근성: 모든 사용자가 쉽게 정보에 접근할 수 있도록 높은 접근성 표준을 적용
-        • 익명성 보호: 닉네임을 사용해 사용자 간의 익명성을 유지하며 안전한 거래 환경을 조성
+       - 사용 편의성: 빠르고 직관적인 검색을 가능하게 하는 레이아웃
+       - 정보 접근성: 모든 사용자가 쉽게 정보에 접근할 수 있도록 높은 접근성 표준을 적용
+       - 익명성 보호: 닉네임을 사용해 사용자 간의 익명성을 유지하며 안전한 거래 환경을 조성
 
-    2) **화면 설계 과정**
-       • 와이어프레임(Wireframe) 제작:
+    3) **화면 설계 과정**
+       - 와이어프레임(Wireframe) 제작:
            - 와이어프레임은 서비스의 기본 구조와 사용자 인터페이스를 계획하는 초기 단계에서 필수적으로 디자인 과정에서 방향성을 제시하고, 구성원 간의 의사소통을 촉진
            - Figma 디자인 툴을 활용하여 프로젝트의 핵심 기능에 중점을 둔 웹사이트의 골격인 와이어프레임 제작
-       • 프로토타입(Prototype) 제작:
+       - 프로토타입(Prototype) 제작:
            - 프로토타입은 와이어프레임을 기반으로 더 상세하게 사용자와의 상호작용을 표현하고, 개발할 웹사이트를 시뮬레이션, 디자인의 실용성을 검증
            - Figma 디자인 툴을 활용하여 와이어프레임을 기반으로 제작, 보다 정확한 프로토타입을 제작하여 개발 전에 사용성 문제를 발견하여 수정
 
